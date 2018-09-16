@@ -99,5 +99,11 @@ class JsonTokenizerSpec extends CommonSpec {
       val tokens = tokenizer.tokenize("}")
       tokens.head mustBe CurlyBracketCloseToken
     }
+
+    it("must emit EndOfSourceToken on empty source") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("")
+      tokens.head mustBe EndOfSourceToken
+    }
   }
 }

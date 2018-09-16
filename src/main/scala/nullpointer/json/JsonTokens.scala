@@ -15,4 +15,7 @@ object JsonTokens {
   case object SquareBracketCloseToken extends JsonToken
   case object CurlyBracketOpenToken extends JsonToken
   case object CurlyBracketCloseToken extends JsonToken
+
+  case object StartOfSourceToken extends JsonToken
+  case object EndOfSourceToken extends JsonToken
 }
