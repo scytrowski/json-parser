@@ -21,7 +21,13 @@ class JsonTokenizer {
 
   private def findToken(source: String): Option[(String, JsonToken)] = {
     val sourceHead = source.head
-    if (sourceHead == ':')
+    if (source.length == 4 && source.take(4) == "null")
+      Some(source.drop(4), NullToken)
+    else if (source.length == 5 && source.take(5) == "false")
+      Some(source.drop(5), FalseToken)
+    else if (source.length == 4 && source.take(4) == "true")
+      Some(source.drop(4), TrueToken)
+    else if (sourceHead == ':')
       Some((source.tail, ColonToken))
     else if (sourceHead == ',')
       Some((source.tail, ComaToken))
