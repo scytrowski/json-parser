@@ -20,52 +20,39 @@ class JsonTokenizer {
     }.tail.map(_.token)
 
   private def findToken(source: String): Option[FoundToken] =
-    findNull(source)
-      .orElse(findFalse(source))
-      .orElse(findTrue(source))
-      .orElse(findSimpleToken(source))
+    findCharToken(source)
+      .orElse(findStringToken(source))
 
-  private def findNull(source: String): Option[FoundToken] = {
-    if (source.length == 4 && source.take(4) == "null")
-      Some(FoundToken(source.drop(4), NullToken))
-    else
-      None
-  }
+  private def findCharToken(source: String): Option[FoundToken] =
+    charTokens
+      .get(source.head)
+      .map(t => FoundToken(source.tail, t))
 
-  private def findFalse(source: String): Option[FoundToken] = {
-    if (source.length == 5 && source.take(5) == "false")
-      Some(FoundToken(source.drop(5), FalseToken))
-    else
-      None
-  }
-
-  private def findTrue(source: String): Option[FoundToken] = {
-    if (source.length == 4 && source.take(4) == "true")
-      Some(FoundToken(source.drop(4), TrueToken))
-    else
-      None
-  }
-
-  private def findSimpleToken(source: String): Option[FoundToken] = {
-    val sourceHead = source.head
-    if (sourceHead == ':')
-      Some(FoundToken(source.tail, ColonToken))
-    else if (sourceHead == ',')
-      Some(FoundToken(source.tail, ComaToken))
-    else if (sourceHead == '[')
-      Some(FoundToken(source.tail, SquareBracketOpenToken))
-    else if (sourceHead == ']')
-      Some(FoundToken(source.tail, SquareBracketCloseToken))
-    else if (sourceHead == '{')
-      Some(FoundToken(source.tail, CurlyBracketOpenToken))
-    else if (sourceHead == '}')
-      Some(FoundToken(source.tail, CurlyBracketCloseToken))
-    else
-      None
-  }
+  private def findStringToken(source: String): Option[FoundToken] =
+    stringTokens
+      .view
+      .map { case (tokenString, token) => (tokenString, token, source.startsWith(tokenString)) }
+      .filter(_._3)
+      .map(t => FoundToken(source.drop(t._1.length), t._2))
+      .headOption
 }
 
 object JsonTokenizer {
+  private lazy val charTokens: Map[Char, JsonToken] = Map(
+    ':' -> ColonToken,
+    ',' -> ComaToken,
+    '[' -> SquareBracketOpenToken,
+    ']' -> SquareBracketCloseToken,
+    '{' -> CurlyBracketOpenToken,
+    '}' -> CurlyBracketCloseToken
+  )
+
+  private lazy val stringTokens: Map[String, JsonToken] = Map(
+    "null" -> NullToken,
+    "false" -> FalseToken,
+    "true" -> TrueToken
+  )
+
   case class FoundToken(sourceLeft: String, token: JsonToken)
 
   object FoundToken {

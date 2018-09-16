@@ -105,5 +105,17 @@ class JsonTokenizerSpec extends CommonSpec {
       val tokens = tokenizer.tokenize("")
       tokens.head mustBe EndOfSourceToken
     }
+
+    it("must emit EndOfSourceToken after last parsed token") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("{}")
+      tokens.drop(2).head mustBe EndOfSourceToken
+    }
+
+    it("must emit EndOfSourceToken after emitted EndOfSourceToken") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("")
+      tokens.tail.head mustBe EndOfSourceToken
+    }
   }
 }
