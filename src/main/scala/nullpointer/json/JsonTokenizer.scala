@@ -20,25 +20,59 @@ class JsonTokenizer {
     }.tail.map(_.token)
 
   private def findToken(source: String): Option[FoundToken] =
-    findCharToken(source)
-      .orElse(findStringToken(source))
+    findCharDefinedToken(source)
+      .orElse(findNumberToken(source))
+      .orElse(findStringDefinedToken(source))
 
-  private def findCharToken(source: String): Option[FoundToken] =
-    charTokens
+  private def findCharDefinedToken(source: String): Option[FoundToken] =
+    charDefinedTokens
       .get(source.head)
       .map(t => FoundToken(source.tail, t))
 
-  private def findStringToken(source: String): Option[FoundToken] =
-    stringTokens
+  private def findStringDefinedToken(source: String): Option[FoundToken] =
+    stringDefinedTokens
       .view
       .map { case (tokenString, token) => (tokenString, token, source.startsWith(tokenString)) }
       .filter(_._3)
       .map(t => FoundToken(source.drop(t._1.length), t._2))
       .headOption
+
+  private def findNumberToken(source: String): Option[FoundToken] = {
+    val startsWithMinus = source.head == '-'
+    val sourceWithoutMinus =
+      if (startsWithMinus)
+        source.tail
+      else
+        source
+    val numberStringOption = findNumberString(sourceWithoutMinus)
+    numberStringOption.map { numberString =>
+      val numberStringWithMinus =
+        if (startsWithMinus)
+          s"-$numberString"
+        else
+          numberString
+      val sourceLeft = source.drop(numberStringWithMinus.length)
+      val value = numberStringWithMinus.toDouble
+      FoundToken(sourceLeft, NumberToken(value))
+    }
+  }
+
+  private def findNumberString(source: String): Option[String] =
+    if (source.head.isDigit) {
+      val integerPartString = source.takeWhile(_.isDigit)
+      val restOfSource = source.drop(integerPartString.length)
+      if (restOfSource.headOption.contains('.')) {
+        val decimalPartString = restOfSource.tail.takeWhile(_.isDigit)
+        val numberString = s"$integerPartString.$decimalPartString"
+        Some(numberString)
+      } else
+        Some(integerPartString)
+    } else
+      None
 }
 
 object JsonTokenizer {
-  private lazy val charTokens: Map[Char, JsonToken] = Map(
+  private lazy val charDefinedTokens: Map[Char, JsonToken] = Map(
     ':' -> ColonToken,
     ',' -> ComaToken,
     '[' -> SquareBracketOpenToken,
@@ -47,7 +81,7 @@ object JsonTokenizer {
     '}' -> CurlyBracketCloseToken
   )
 
-  private lazy val stringTokens: Map[String, JsonToken] = Map(
+  private lazy val stringDefinedTokens: Map[String, JsonToken] = Map(
     "null" -> NullToken,
     "false" -> FalseToken,
     "true" -> TrueToken
