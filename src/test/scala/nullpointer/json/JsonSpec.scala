@@ -60,6 +60,13 @@ class JsonSpec extends CommonSpec {
       result.get mustBe JsonNumber(4056.791)
     }
 
+    it("must parse empty string") {
+      val json = new Json
+      val result = json.parse("\"\"")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString("")
+    }
+
     it("must parse string") {
       val json = new Json
       val result = json.parse("\"abcdefghij\"")
@@ -72,6 +79,62 @@ class JsonSpec extends CommonSpec {
       val result = json.parse("\"abc\\\"def\"")
       result.isSuccess mustBe true
       result.get mustBe JsonString("abc\"def")
+    }
+
+    it("must parse string with escaped reverse solidus") {
+      val json = new Json
+      val result = json.parse("\"abc\\\\def\"")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString("abc\\def")
+    }
+
+    it("must parse string with escaped solidus") {
+      val json = new Json
+      val result = json.parse("\"abc\\/def\"")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString("abc/def")
+    }
+
+    it("must parse string with escaped backspace") {
+      val json = new Json
+      val result = json.parse("\"abc\\bdef\"")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString(s"abc${8.toChar}def")
+    }
+
+    it("must parse string with escaped formfeed") {
+      val json = new Json
+      val result = json.parse("\"abc\\fdef\"")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString(s"abc${12.toChar}def")
+    }
+
+    it("must parse string with escaped newline") {
+      val json = new Json
+      val result = json.parse("\"abc\\ndef\"")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString("abc\ndef")
+    }
+
+    it("must parse string with escaped carriage return") {
+      val json = new Json
+      val result = json.parse("\"abc\\rdef\"")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString("abc\rdef")
+    }
+
+    it("must parse string with escaped unicode character") {
+      val json = new Json
+      val result = json.parse("\"abc\\u3a9fdef")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString(s"abc${15007.toChar}def")
+    }
+
+    it("must parse string with escaped horizontal tab") {
+      val json = new Json
+      val result = json.parse("\"abc\\tdef\"")
+      result.isSuccess mustBe true
+      result.get mustBe JsonString("abc\tdef")
     }
 
     it("must parse empty array") {

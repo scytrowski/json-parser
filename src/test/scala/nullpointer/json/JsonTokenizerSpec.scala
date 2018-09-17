@@ -64,6 +64,54 @@ class JsonTokenizerSpec extends CommonSpec {
       tokens.head mustBe StringToken("zxc\"vb\"nm")
     }
 
+    it("must emit StringToken with correct value when string with escaped reverse solidus on head") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("\"zxc\\\\vb\\\\nm\"")
+      tokens.head mustBe StringToken("zxc\\vb\\nm")
+    }
+
+    it("must emit StringToken with correct value when string with escaped solidus on head") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("\"zxc\\/vb\\/nm\"")
+      tokens.head mustBe StringToken("zxc/vb/nm")
+    }
+
+    it("must emit StringToken with correct value when string with escaped backspace on head") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("\"zxc\\bvb\\bnm\"")
+      tokens.head mustBe StringToken(s"zxc${8.toChar}vb${8.toChar}nm")
+    }
+
+    it("must emit StringToken with correct value when string with escaped formfeed on head") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("\"zxc\\fvb\\fnm\"")
+      tokens.head mustBe StringToken(s"zxc${12.toChar}vb${8.toChar}nm")
+    }
+
+    it("must emit StringToken with correct value when string with escaped newline on head") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("\"zxc\\nvb\\nnm\"")
+      tokens.head mustBe StringToken("zxc\nvb\nnm")
+    }
+
+    it("must emit StringToken with correct value when string with escaped carriage return on head") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("\"zxc\\rvb\\rnm\"")
+      tokens.head mustBe StringToken("zxc\rvb\rnm")
+    }
+
+    it("must emit StringToken with correct value when string with escaped horizontal tab on head") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("\"zxc\\tvb\\tnm\"")
+      tokens.head mustBe StringToken("zxc\tvb\tnm")
+    }
+
+    it("must emit StringToken with correct value when string with escaped unicode characters on head") {
+      val tokenizer = new JsonTokenizer
+      val tokens = tokenizer.tokenize("\"zxc\\u69cfvb\\u0a1dnm\"")
+      tokens.head mustBe StringToken(s"zxc${27087.toChar}vb${2589.toChar}nm")
+    }
+
     it("must emit ColonToken when : on head") {
       val tokenizer = new JsonTokenizer
       val tokens = tokenizer.tokenize(":")
