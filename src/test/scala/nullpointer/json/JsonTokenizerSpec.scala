@@ -79,13 +79,13 @@ class JsonTokenizerSpec extends CommonSpec {
     it("must emit StringToken with correct value when string with escaped backspace on head") {
       val tokenizer = new JsonTokenizer
       val tokens = tokenizer.tokenize("\"zxc\\bvb\\bnm\"")
-      tokens.head mustBe StringToken(s"zxc${8.toChar}vb${8.toChar}nm")
+      tokens.head mustBe StringToken(s"zxc\bvb\bnm")
     }
 
     it("must emit StringToken with correct value when string with escaped formfeed on head") {
       val tokenizer = new JsonTokenizer
       val tokens = tokenizer.tokenize("\"zxc\\fvb\\fnm\"")
-      tokens.head mustBe StringToken(s"zxc${12.toChar}vb${8.toChar}nm")
+      tokens.head mustBe StringToken(s"zxc\fvb\fnm")
     }
 
     it("must emit StringToken with correct value when string with escaped newline on head") {

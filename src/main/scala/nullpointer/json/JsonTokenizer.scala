@@ -2,6 +2,8 @@ package nullpointer.json
 
 import nullpointer.json.JsonTokens._
 
+import scala.util.matching.Regex
+
 class JsonTokenizer {
   import JsonTokenizer._
 
@@ -21,6 +23,7 @@ class JsonTokenizer {
 
   private def findToken(source: String): Option[FoundToken] =
     findCharDefinedToken(source)
+      .orElse(findStringToken(source))
       .orElse(findNumberToken(source))
       .orElse(findStringDefinedToken(source))
 
@@ -69,6 +72,48 @@ class JsonTokenizer {
         Some(integerPartString)
     } else
       None
+
+  private def findStringToken(source: String): Option[FoundToken] =
+    if (source.head == '"') {
+      val valueOption = findStringValue(source.tail)
+      valueOption.map { value =>
+        val sourceLeft = source.drop(value.length + 1)
+        FoundToken(sourceLeft, StringToken(value))
+      }
+    } else
+      None
+
+  private def findStringValue(source: String): Option[String] = {
+    val sourceHead = source.head
+    if (source.head == '"')
+      None
+    else if (source.head == '\\')
+      findEscapedCharacter(source.tail).map(c => s"${c.character}${findStringValue(c.sourceLeft).getOrElse("")}")
+    else
+      Some(s"$sourceHead${findStringValue(source.tail).getOrElse("")}")
+  }
+
+  private def findEscapedCharacter(source: String): Option[FoundEscapedCharacter] =
+    source.headOption.flatMap { sourceHead =>
+      if (sourceHead == '"')
+        Some(FoundEscapedCharacter(source.tail, '"'))
+      else if (sourceHead == '\\')
+        Some(FoundEscapedCharacter(source.tail, '\\'))
+      else if (sourceHead == '/')
+        Some(FoundEscapedCharacter(source.tail, '/'))
+      else if (sourceHead == 'b')
+        Some(FoundEscapedCharacter(source.tail, '\b'))
+      else if (sourceHead == 'f')
+        Some(FoundEscapedCharacter(source.tail, '\f'))
+      else if (sourceHead == 'n')
+        Some(FoundEscapedCharacter(source.tail, '\n'))
+      else if (sourceHead == 'r')
+        Some(FoundEscapedCharacter(source.tail, '\r'))
+      else if (sourceHead == 't')
+        Some(FoundEscapedCharacter(source.tail, '\t'))
+      else
+        None
+    }
 }
 
 object JsonTokenizer {
@@ -88,6 +133,8 @@ object JsonTokenizer {
   )
 
   case class FoundToken(sourceLeft: String, token: JsonToken)
+
+  case class FoundEscapedCharacter(sourceLeft: String, character: Char)
 
   object FoundToken {
     def startOfSource(source: String): FoundToken =
