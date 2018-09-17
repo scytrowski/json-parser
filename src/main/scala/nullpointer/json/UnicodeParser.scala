@@ -3,8 +3,8 @@ package nullpointer.json
 import scala.util.matching.Regex
 import scala.util.{Failure, Success, Try}
 
-class UnicodeParser {
-  import UnicodeParser._
+object UnicodeParser {
+  private lazy val hexadecimalRegex: Regex = "^[0-9a-fA-F]+$".r
 
   def parse(codeString: String): Try[Char] =
     if (codeString.length == 4)
@@ -19,12 +19,8 @@ class UnicodeParser {
       Success(code.toChar)
     } else
       Failure(UnicodeFormatException("Unicode code string must be correct hexadecimal string"))
-}
 
-object UnicodeParser {
-  private lazy val hexadecimalRegex: Regex = "^[0-9a-fA-F]+$".r
-
-  def getHexValue(hexChar: Char): Byte = hexChar match {
+  private def getHexValue(hexChar: Char): Byte = hexChar match {
     case '0' => 0
     case '1' => 1
     case '2' => 2

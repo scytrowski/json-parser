@@ -21,8 +21,7 @@ class UnicodeParserSpec extends CommonSpec {
         ("FFFF", 65535.toChar)
       )
       forAll(validCodeStrings) { (validCodeString, expectedChar) =>
-        val parser = new UnicodeParser
-        val result = parser.parse(validCodeString)
+        val result = UnicodeParser.parse(validCodeString)
         result.isSuccess mustBe true
         result.get mustBe expectedChar
       }
@@ -38,8 +37,7 @@ class UnicodeParserSpec extends CommonSpec {
         "abcde"
       )
       forAll(invalidCodeStrings) { invalidCodeString =>
-        val parser = new UnicodeParser
-        val result = parser.parse(invalidCodeString)
+        val result = UnicodeParser.parse(invalidCodeString)
         result.isFailure mustBe true
         result.asInstanceOf[Failure[Char]].exception.isInstanceOf[UnicodeFormatException] mustBe true
       }
@@ -56,8 +54,7 @@ class UnicodeParserSpec extends CommonSpec {
         "poiu"
       )
       forAll(invalidCodeStrings) { invalidCodeString =>
-        val parser = new UnicodeParser
-        val result = parser.parse(invalidCodeString)
+        val result = UnicodeParser.parse(invalidCodeString)
         result.isFailure mustBe true
         result.asInstanceOf[Failure[Char]].exception.isInstanceOf[UnicodeFormatException] mustBe true
       }
