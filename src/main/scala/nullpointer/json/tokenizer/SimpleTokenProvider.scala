@@ -2,7 +2,7 @@ package nullpointer.json.tokenizer
 
 import nullpointer.json.tokenizer.JsonTokens._
 
-object SimpleTokenProvider extends TokenProvider[JsonToken] {
+private object SimpleTokenProvider extends TokenProvider[JsonToken] {
   private lazy val definedTokens: Map[String, JsonToken] = Map(
     ":" -> ColonToken,
     "," -> ComaToken,

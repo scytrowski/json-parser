@@ -2,7 +2,7 @@ package nullpointer.json.tokenizer
 
 import nullpointer.json.tokenizer.JsonTokens.StringToken
 
-object StringTokenProvider extends TokenProvider[StringToken] {
+private object StringTokenProvider extends TokenProvider[StringToken] {
   override def provide(source: String): Option[FoundToken] =
     if (source.startsWith("\"")) {
       val initialFoundCharacterOption: Option[FoundCharacter] = Some(FoundCharacter.startOfString(source.tail))

@@ -2,7 +2,7 @@ package nullpointer.json.tokenizer
 
 import scala.util.{Failure, Success}
 
-object UnicodeCharacterProvider extends CharacterProvider {
+private object UnicodeCharacterProvider extends CharacterProvider {
   override def provide(source: String): Option[FoundCharacter] = {
     val codeString = source.take(4)
     UnicodeParser.parse(codeString) match {

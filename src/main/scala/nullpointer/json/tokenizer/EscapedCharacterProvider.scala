@@ -1,6 +1,6 @@
 package nullpointer.json.tokenizer
 
-object EscapedCharacterProvider extends CharacterProvider {
+private object EscapedCharacterProvider extends CharacterProvider {
   override def provide(source: String): Option[FoundCharacter] =
     source.headOption.flatMap {
       case '"' => Some(FoundCharacter(source.tail, '"'))

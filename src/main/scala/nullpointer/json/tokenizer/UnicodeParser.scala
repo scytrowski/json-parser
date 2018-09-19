@@ -2,7 +2,7 @@ package nullpointer.json.tokenizer
 
 import scala.util.{Failure, Success, Try}
 
-object UnicodeParser {
+private object UnicodeParser {
   def parse(codeString: String): Try[Char] =
     if (codeString.length == 4)
       parseIfHaveCorrectLength(codeString)

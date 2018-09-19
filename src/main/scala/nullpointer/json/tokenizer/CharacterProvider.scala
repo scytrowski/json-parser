@@ -1,5 +1,5 @@
 package nullpointer.json.tokenizer
 
-trait CharacterProvider {
+private trait CharacterProvider {
   def provide(source: String): Option[FoundCharacter]
 }

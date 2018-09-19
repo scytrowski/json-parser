@@ -1,6 +1,6 @@
 package nullpointer.json.tokenizer
 
-object Hexadecimal {
+private object Hexadecimal {
   private lazy val hexCharValues: Map[Char, Byte] = Map(
     '0' -> 0,
     '1' -> 1,
