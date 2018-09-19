@@ -4,6 +4,6 @@ import nullpointer.json.JsonValues.JsonValue
 
 import scala.util.Try
 
-class Json {
+object Json {
   def parse(source: String): Try[JsonValue] = ???
 }
