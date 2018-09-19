@@ -1,6 +1,6 @@
 package nullpointer.json.tokenizer
 
-import SeqOfOptionsExtensions.SeqOfOptionsWithAllDefined
+import nullpointer.json.tokenizer.SeqOfOptionsExtensions.SeqOfOptionsWithAllDefined
 
 class SeqOfOptionsWithAllDefinedSpec extends CommonSpec {
   import SeqOfOptionsWithAllDefinedSpec._
