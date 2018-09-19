@@ -4,30 +4,43 @@ import nullpointer.json.tokenizer.JsonTokens.StringToken
 
 private object StringTokenProvider extends TokenProvider[StringToken] {
   override def provide(source: String): Option[FoundToken] =
-    if (source.startsWith("\"")) {
-      val initialFoundCharacterOption: Option[FoundCharacter] = Some(FoundCharacter.startOfString(source.tail))
-      val foundCharacters = Stream
-        .iterate(initialFoundCharacterOption) {
-          case Some(FoundCharacter(sourceLeft, _, endOfString)) =>
-            if (!endOfString)
-              GeneralCharacterProvider.provide(sourceLeft)
-            else
-              None
-          case None => None
-        }
-        .tail
-        .takeWhile(_.isDefined)
-        .map(_.get)
-      val lastFoundCharacterOption = foundCharacters.lastOption
-      if (lastFoundCharacterOption.forall(_.endOfString)) {
-        val stringValue = foundCharacters
-          .map(_.character)
-          .dropRight(1)
-          .foldLeft("")((s, c) => s"$s$c")
-        val sourceLeft = lastFoundCharacterOption.get.sourceLeft
-        Some(FoundToken(sourceLeft, StringToken(stringValue)))
-      } else
-        None
-    } else
+    if (source.startsWith("\""))
+      findStringValue(source)
+    else
       None
+
+  private def findStringValue(source: String): Option[FoundToken] = {
+    val foundCharactersStream = createFoundCharactersStream(source)
+    getLastFoundCharacter(foundCharactersStream).map { lastFoundCharacter =>
+      val stringValue = createStringValueFromFoundCharacters(foundCharactersStream)
+      val sourceLeft = lastFoundCharacter.sourceLeft
+      FoundToken(sourceLeft, StringToken(stringValue))
+    }
+  }
+
+  private def createFoundCharactersStream(source: String): Stream[FoundCharacter] = {
+    val initialFoundCharacterOption: Option[FoundCharacter] = Some(FoundCharacter.startOfString(source.tail))
+    Stream
+      .iterate(initialFoundCharacterOption)(findNextCharacter)
+      .tail
+      .takeWhile(_.isDefined)
+      .map(_.get)
+  }
+
+  private def getLastFoundCharacter(foundCharacters: Seq[FoundCharacter]): Option[FoundCharacter] = {
+    val lastFoundCharacterOption = foundCharacters.lastOption
+    lastFoundCharacterOption.filter(_.endOfString)
+  }
+
+  private def createStringValueFromFoundCharacters(foundCharacters: Seq[FoundCharacter]): String =
+    foundCharacters
+      .dropRight(1)
+      .map(_.character)
+      .mkString
+
+  private def findNextCharacter(previousFoundCharacterOption: Option[FoundCharacter]): Option[FoundCharacter] =
+    for {
+      previouslyFoundCharacter <- previousFoundCharacterOption
+      foundCharacter <- GeneralCharacterProvider.provide(previouslyFoundCharacter.sourceLeft) if !previouslyFoundCharacter.endOfString
+    } yield foundCharacter
 }
