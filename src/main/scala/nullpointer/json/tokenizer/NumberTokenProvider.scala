@@ -1,6 +1,6 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
-import nullpointer.json.JsonTokens.NumberToken
+import nullpointer.json.tokenizer.JsonTokens.NumberToken
 
 object NumberTokenProvider extends TokenProvider[NumberToken] {
   override def provide(source: String): Option[FoundToken] =

@@ -1,4 +1,4 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
 object GeneralCharacterProvider extends CharacterProvider {
   override def provide(source: String): Option[FoundCharacter] =

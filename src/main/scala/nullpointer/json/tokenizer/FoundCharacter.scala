@@ -1,4 +1,4 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
 case class FoundCharacter(sourceLeft: String, character: Char, endOfString: Boolean = false)
 

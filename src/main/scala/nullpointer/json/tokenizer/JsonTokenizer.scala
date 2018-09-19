@@ -1,6 +1,6 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
-import nullpointer.json.JsonTokens._
+import nullpointer.json.tokenizer.JsonTokens._
 
 class JsonTokenizer {
   def tokenize(source: String): Stream[JsonToken] =

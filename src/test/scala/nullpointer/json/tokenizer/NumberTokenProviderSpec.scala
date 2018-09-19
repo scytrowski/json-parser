@@ -1,6 +1,6 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
-import nullpointer.json.JsonTokens.NumberToken
+import nullpointer.json.tokenizer.JsonTokens.NumberToken
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class NumberTokenProviderSpec extends CommonSpec {

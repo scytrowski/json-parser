@@ -1,9 +1,9 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
-import nullpointer.json.UnicodeParser.UnicodeFormatException
+import nullpointer.json.tokenizer.UnicodeParser.UnicodeFormatException
+import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import scala.util.Failure
-import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class UnicodeParserSpec extends CommonSpec {
   describe("An UnicodeParser") {

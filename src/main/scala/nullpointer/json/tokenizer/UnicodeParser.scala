@@ -1,4 +1,4 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
 import scala.util.{Failure, Success, Try}
 

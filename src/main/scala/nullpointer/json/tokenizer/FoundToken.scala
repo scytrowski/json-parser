@@ -1,6 +1,6 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
-import nullpointer.json.JsonTokens.{EndOfSourceToken, JsonToken, StartOfSourceToken}
+import nullpointer.json.tokenizer.JsonTokens.{EndOfSourceToken, JsonToken, StartOfSourceToken}
 
 case class FoundToken(sourceLeft: String, token: JsonToken)
 

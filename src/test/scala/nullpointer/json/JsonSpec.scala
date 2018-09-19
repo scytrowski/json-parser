@@ -1,6 +1,7 @@
 package nullpointer.json
 
 import nullpointer.json.JsonValues._
+import nullpointer.json.tokenizer.CommonSpec
 
 class JsonSpec extends CommonSpec {
   describe("Json") {

@@ -1,4 +1,4 @@
-package nullpointer.json
+package nullpointer.json.tokenizer
 
 object JsonTokens {
   sealed trait JsonToken
