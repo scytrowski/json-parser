@@ -2,6 +2,8 @@ package nullpointer.json
 
 import nullpointer.json.JsonTokens.StringToken
 
+import scala.util.{Failure, Success}
+
 object StringTokenProvider extends TokenProvider[StringToken] {
   override def provide(source: String): Option[FoundToken] =
     if (source.startsWith("\"")) {
@@ -38,25 +40,25 @@ object StringTokenProvider extends TokenProvider[StringToken] {
     }
 
   private def findEscapedCharacter(source: String): Option[FoundCharacter] =
-    source.headOption.flatMap { sourceHead =>
-      if (sourceHead == '"')
-        Some(FoundCharacter(source.tail, '"'))
-      else if (sourceHead == '\\')
-        Some(FoundCharacter(source.tail, '\\'))
-      else if (sourceHead == '/')
-        Some(FoundCharacter(source.tail, '/'))
-      else if (sourceHead == 'b')
-        Some(FoundCharacter(source.tail, '\b'))
-      else if (sourceHead == 'f')
-        Some(FoundCharacter(source.tail, '\f'))
-      else if (sourceHead == 'n')
-        Some(FoundCharacter(source.tail, '\n'))
-      else if (sourceHead == 'r')
-        Some(FoundCharacter(source.tail, '\r'))
-      else if (sourceHead == 't')
-        Some(FoundCharacter(source.tail, '\t'))
-      else
-        None
+    source.headOption.flatMap {
+      case '"' => Some(FoundCharacter(source.tail, '"'))
+      case '\\' => Some(FoundCharacter(source.tail, '\\'))
+      case '/' => Some(FoundCharacter(source.tail, '/'))
+      case 'b' => Some(FoundCharacter(source.tail, '\b'))
+      case 'f' => Some(FoundCharacter(source.tail, '\f'))
+      case 'n' => Some(FoundCharacter(source.tail, '\n'))
+      case 'r' => Some(FoundCharacter(source.tail, '\r'))
+      case 't' => Some(FoundCharacter(source.tail, '\t'))
+      case 'u' =>
+        val sourceTail = source.tail
+        val codeString = sourceTail.take(4)
+        UnicodeParser.parse(codeString) match {
+          case Success(unicodeCharacter) =>
+            val sourceLeft = sourceTail.drop(4)
+            Some(FoundCharacter(sourceLeft, unicodeCharacter))
+          case Failure(_) => None
+        }
+      case _ => None
     }
 
   private final case class FoundCharacter(sourceLeft: String, character: Char, endOfString: Boolean = false)

@@ -145,7 +145,7 @@ class StringTokenProviderSpec extends CommonSpec {
         ("\"abc\\u071azxc\"def", "def", s"abc${1818.toChar}zxc"),
         ("\"\\u5df0abc\"$@!", "$@!", s"${24048.toChar}abc"),
         ("\"zxc\\uf07e\"poi", "poi", s"zxc${61566.toChar}"),
-        ("\"\\u7f0amnb\\u2ba9\"abc", "abc", s"${32522.toChar}mnb${8361.toChar}")
+        ("\"\\u7f0amnb\\u2ba9\"abc", "abc", s"${32522.toChar}mnb${11177.toChar}")
       )
       forAll(stringWithEscapedUnicodeCharactersTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
