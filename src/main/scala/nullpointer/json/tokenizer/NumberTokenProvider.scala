@@ -5,25 +5,25 @@ import nullpointer.json.tokenizer.JsonTokens.NumberToken
 private object NumberTokenProvider extends TokenProvider[NumberToken] {
   override def provide(source: String): Option[FoundToken] =
     if (!source.isEmpty) {
-      val startsWithMinus = source.head == '-'
-      val sourceWithoutMinus =
-        if (startsWithMinus)
-          source.tail
-        else
-          source
-      val numberStringOption = findNumberString(sourceWithoutMinus)
+      val numberStringOption = getFindNumberStringFunction(source)(source)
       numberStringOption.map { numberString =>
-        val numberStringWithMinus =
-          if (startsWithMinus)
-            s"-$numberString"
-          else
-            numberString
-        val sourceLeft = source.drop(numberStringWithMinus.length)
-        val value = numberStringWithMinus.toDouble
-        FoundToken(sourceLeft, NumberToken(value))
+        val sourceLeft = source.drop(numberString.length)
+        val numberValue = numberString.toDouble
+        FoundToken(sourceLeft, NumberToken(numberValue))
       }
     } else
       None
+
+  private def getFindNumberStringFunction(source: String): String => Option[String] =
+    if (source.startsWith("-"))
+      findNumberStringWithLeadingMinus
+    else
+      findNumberString
+
+  private def findNumberStringWithLeadingMinus(source: String): Option[String] = {
+    val sourceTail = source.tail
+    findNumberString(sourceTail).map(numberString => s"-$numberString")
+  }
 
   private def findNumberString(source: String): Option[String] =
     if (source.head.isDigit) {
