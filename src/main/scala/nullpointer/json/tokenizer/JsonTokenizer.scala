@@ -2,7 +2,7 @@ package nullpointer.json.tokenizer
 
 import nullpointer.json.tokenizer.JsonTokens._
 
-class JsonTokenizer {
+object JsonTokenizer {
   def tokenize(source: String): Stream[JsonToken] =
     Stream.iterate(FoundToken.startOfSource(source)) {
       case FoundToken(sourceLeft, _) =>
