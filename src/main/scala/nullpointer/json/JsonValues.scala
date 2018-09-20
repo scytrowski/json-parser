@@ -7,6 +7,20 @@ object JsonValues {
   case class JsonBoolean(value: Boolean) extends JsonValue
   case class JsonNumber(value: Double) extends JsonValue
   case class JsonString(value: String) extends JsonValue
+
   case class JsonArray(elements: Seq[JsonValue]) extends JsonValue
-  case class JsonObject(elements: Map[String, JsonValue])
+
+  object JsonArray {
+    def apply(): JsonArray = JsonArray(Seq.empty)
+
+    def apply(firstElement: JsonValue, rest: JsonValue*): JsonArray = JsonArray(firstElement +: rest)
+  }
+
+  case class JsonObject(elements: Map[String, JsonValue]) extends JsonValue
+
+  object JsonObject {
+    def apply(): JsonObject = JsonObject(Map.empty[String, JsonValue])
+
+    def apply(firstElement: (String, JsonValue), rest: (String, JsonValue)*): JsonObject = JsonObject(Map[String, JsonValue](firstElement +: rest:_*))
+  }
 }
