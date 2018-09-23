@@ -8,12 +8,12 @@ object JsonValues {
   case class JsonNumber(value: Double) extends JsonValue
   case class JsonString(value: String) extends JsonValue
 
-  case class JsonArray(elements: Seq[JsonValue]) extends JsonValue
+  case class JsonArray(elements: List[JsonValue]) extends JsonValue
 
   object JsonArray {
-    def apply(): JsonArray = JsonArray(Seq.empty)
+    def apply(): JsonArray = JsonArray(List.empty)
 
-    def apply(firstElement: JsonValue, rest: JsonValue*): JsonArray = JsonArray(firstElement +: rest)
+    def apply(firstElement: JsonValue, rest: JsonValue*): JsonArray = JsonArray(firstElement +: rest.toList)
   }
 
   case class JsonObject(elements: Map[String, JsonValue]) extends JsonValue

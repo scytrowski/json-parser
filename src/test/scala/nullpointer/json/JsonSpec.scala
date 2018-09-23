@@ -122,7 +122,7 @@ class JsonSpec extends CommonSpec {
     it("must parse empty array") {
       val result = Json.parse("[]")
       result.isSuccess mustBe true
-      result.get mustBe JsonArray(Seq.empty)
+      result.get mustBe JsonArray(List.empty)
     }
 
     it("must parse array") {
@@ -142,7 +142,7 @@ class JsonSpec extends CommonSpec {
     it("must parse empty object") {
       val result = Json.parse("{}")
       result.isSuccess mustBe true
-      result.get mustBe JsonObject(Map.empty)
+      result.get mustBe JsonObject()
     }
 
     it("must parse object") {

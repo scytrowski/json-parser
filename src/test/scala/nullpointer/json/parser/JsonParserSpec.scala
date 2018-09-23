@@ -52,11 +52,21 @@ class JsonParserSpec extends CommonSpec {
     it("must return correct array when SquareBracketOpenToken followed by single element token followed by SquareBracketCloseToken on head") {
       val arrayWithSingleElementCases = Table(
         ("tokenSequence", "expectedValue"),
-        (Stream(SquareBracketOpenToken, NullToken, SquareBracketCloseToken), JsonArray(JsonNull)),
-        (Stream(SquareBracketOpenToken, FalseToken, SquareBracketCloseToken), JsonArray(JsonBoolean(false))),
-        (Stream(SquareBracketOpenToken, TrueToken, SquareBracketCloseToken), JsonArray(JsonBoolean(true))),
-        (Stream(SquareBracketOpenToken, NumberToken(87.157), SquareBracketCloseToken), JsonArray(JsonNumber(87.157))),
-        (Stream(SquareBracketOpenToken, StringToken("zxcv"), SquareBracketCloseToken), JsonArray(JsonString("zxcv")))
+        (Stream(SquareBracketOpenToken,
+                  NullToken,
+                SquareBracketCloseToken), JsonArray(JsonNull)),
+        (Stream(SquareBracketOpenToken,
+                  FalseToken,
+                SquareBracketCloseToken), JsonArray(JsonBoolean(false))),
+        (Stream(SquareBracketOpenToken,
+                  TrueToken,
+                SquareBracketCloseToken), JsonArray(JsonBoolean(true))),
+        (Stream(SquareBracketOpenToken,
+                  NumberToken(87.157),
+                SquareBracketCloseToken), JsonArray(JsonNumber(87.157))),
+        (Stream(SquareBracketOpenToken,
+                  StringToken("zxcv"),
+                SquareBracketCloseToken), JsonArray(JsonString("zxcv")))
       )
       forAll(arrayWithSingleElementCases) { (tokenSequence, expectedValue) =>
         val result = JsonParser.parse(tokenSequence)
@@ -70,19 +80,21 @@ class JsonParserSpec extends CommonSpec {
         ("tokenSequence", "expectedValue"),
         (Stream(
           SquareBracketOpenToken,
-          NullToken, ComaToken,
-          TrueToken,
+            NullToken, ComaToken,
+            TrueToken,
           SquareBracketCloseToken), JsonArray(JsonNull, JsonBoolean(true))),
-        (Stream(SquareBracketOpenToken,
-          FalseToken, ComaToken,
-          NumberToken(4.901), ComaToken,
-          NullToken,
+        (Stream(
+          SquareBracketOpenToken,
+            FalseToken, ComaToken,
+            NumberToken(4.901), ComaToken,
+            NullToken,
           SquareBracketCloseToken), JsonArray(JsonBoolean(false), JsonNumber(4.901), JsonNull)),
-        (Stream(SquareBracketOpenToken,
-          StringToken("lkop"), ComaToken,
-          TrueToken, ComaToken,
-          NumberToken(36.791), ComaToken,
-          NullToken,
+        (Stream(
+          SquareBracketOpenToken,
+            StringToken("lkop"), ComaToken,
+            TrueToken, ComaToken,
+            NumberToken(36.791), ComaToken,
+            NullToken,
           SquareBracketCloseToken), JsonArray(JsonString("lkop"), JsonBoolean(true), JsonNumber(36.791), JsonNull))
       )
       forAll(arrayWithMultipleElementCases) { (tokenSequence, expectedValue) =>
@@ -95,7 +107,10 @@ class JsonParserSpec extends CommonSpec {
     it("must return correct array when contain nested array") {
       val result = JsonParser.parse(Stream(
         SquareBracketOpenToken,
-        SquareBracketOpenToken, TrueToken, NumberToken(-15.712), SquareBracketCloseToken,
+          SquareBracketOpenToken,
+            TrueToken, ComaToken,
+            NumberToken(-15.712), ComaToken,
+          SquareBracketCloseToken,
         SquareBracketCloseToken))
       result.isSuccess mustBe true
       result.get mustBe JsonArray(JsonArray(JsonBoolean(true), JsonNumber(-15.712)))
@@ -104,9 +119,9 @@ class JsonParserSpec extends CommonSpec {
     it("must return correct array when contain object") {
       val result = JsonParser.parse(Stream(
         SquareBracketOpenToken,
-        CurlyBracketOpenToken,
-          StringToken("abc"), ColonToken, StringToken("def"),
-        CurlyBracketCloseToken,
+          CurlyBracketOpenToken,
+            StringToken("abc"), ColonToken, StringToken("def"),
+          CurlyBracketCloseToken,
         SquareBracketCloseToken
       ))
       result.isSuccess mustBe true
@@ -118,7 +133,7 @@ class JsonParserSpec extends CommonSpec {
     it("must fail with JsonParsingException when array is not terminated by SquareBracketCloseToken") {
       val result = JsonParser.parse(Stream(
         SquareBracketOpenToken,
-        NullToken
+          NullToken
       ))
       result.isFailure mustBe true
       result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
@@ -138,27 +153,27 @@ class JsonParserSpec extends CommonSpec {
         ("tokenSequence", "expectedValue"),
         (Stream(
           CurlyBracketOpenToken,
-          StringToken("abc"), ColonToken, NullToken,
+            StringToken("abc"), ColonToken, NullToken,
           CurlyBracketCloseToken
         ), JsonObject("abc" -> JsonNull)),
         (Stream(
           CurlyBracketOpenToken,
-          StringToken("def"), ColonToken, FalseToken,
+            StringToken("def"), ColonToken, FalseToken,
           CurlyBracketCloseToken
         ), JsonObject("def" -> JsonBoolean(false))),
         (Stream(
           CurlyBracketOpenToken,
-          StringToken("ghi"), ColonToken, TrueToken,
+            StringToken("ghi"), ColonToken, TrueToken,
           CurlyBracketCloseToken
         ), JsonObject("ghi" -> JsonBoolean(true))),
         (Stream(
           CurlyBracketOpenToken,
-          StringToken("jkl"), ColonToken, NumberToken(63.087),
+            StringToken("jkl"), ColonToken, NumberToken(63.087),
           CurlyBracketCloseToken
         ), JsonObject("jkl" -> JsonNumber(63.087))),
         (Stream(
           CurlyBracketOpenToken,
-          StringToken("mno"), ColonToken, StringToken("uiop"),
+            StringToken("mno"), ColonToken, StringToken("uiop"),
           CurlyBracketCloseToken
         ), JsonObject("mno" -> JsonString("uiop")))
       )
@@ -174,17 +189,17 @@ class JsonParserSpec extends CommonSpec {
         ("tokenSequence", "expectedValue"),
         (Stream(
           CurlyBracketOpenToken,
-          StringToken("abc"), ColonToken, TrueToken, ComaToken,
-          StringToken("def"), ColonToken, NumberToken(53.907),
+            StringToken("abc"), ColonToken, TrueToken, ComaToken,
+            StringToken("def"), ColonToken, NumberToken(53.907),
           CurlyBracketCloseToken
         ), JsonObject(
           "abc" -> JsonBoolean(true),
           "def" -> JsonNumber(53.907))),
         (Stream(
           CurlyBracketOpenToken,
-          StringToken("abc"), ColonToken, NullToken, ComaToken,
-          StringToken("def"), ColonToken, StringToken("ytr"), ComaToken,
-          StringToken("ghi"), ColonToken, FalseToken,
+            StringToken("abc"), ColonToken, NullToken, ComaToken,
+            StringToken("def"), ColonToken, StringToken("ytr"), ComaToken,
+            StringToken("ghi"), ColonToken, FalseToken,
           CurlyBracketCloseToken
         ), JsonObject(
           "abc" -> JsonNull,
@@ -192,10 +207,10 @@ class JsonParserSpec extends CommonSpec {
           "ghi" -> JsonBoolean(false))),
         (Stream(
           CurlyBracketOpenToken,
-          StringToken("abc"), ColonToken, NumberToken(-72.651), ComaToken,
-          StringToken("def"), ColonToken, TrueToken, ComaToken,
-          StringToken("ghi"), ColonToken, StringToken("fgh"), ComaToken,
-          StringToken("jkl"), ColonToken, NullToken, ComaToken,
+            StringToken("abc"), ColonToken, NumberToken(-72.651), ComaToken,
+            StringToken("def"), ColonToken, TrueToken, ComaToken,
+            StringToken("ghi"), ColonToken, StringToken("fgh"), ComaToken,
+            StringToken("jkl"), ColonToken, NullToken, ComaToken,
           CurlyBracketCloseToken
         ), JsonObject(
           "abc" -> JsonNumber(-72.651),
@@ -214,8 +229,10 @@ class JsonParserSpec extends CommonSpec {
     it("must return correct object when contain nested object") {
       val result = JsonParser.parse(Stream(
         CurlyBracketOpenToken,
-        StringToken("abc"), ColonToken,
-        CurlyBracketOpenToken, StringToken("def"), ColonToken, NumberToken(1337), CurlyBracketCloseToken,
+          StringToken("abc"), ColonToken,
+          CurlyBracketOpenToken,
+            StringToken("def"), ColonToken, NumberToken(1337),
+          CurlyBracketCloseToken,
         CurlyBracketCloseToken
       ))
       result.isSuccess mustBe true
@@ -229,8 +246,10 @@ class JsonParserSpec extends CommonSpec {
     it("must return correct object when contain array") {
       val result = JsonParser.parse(Stream(
         CurlyBracketOpenToken,
-        StringToken("abc"), ColonToken,
-        SquareBracketOpenToken, NumberToken(69.013), SquareBracketCloseToken,
+          StringToken("abc"), ColonToken,
+          SquareBracketOpenToken,
+            NumberToken(69.013),
+          SquareBracketCloseToken,
         CurlyBracketCloseToken
       ))
       result.isSuccess mustBe true
@@ -242,8 +261,8 @@ class JsonParserSpec extends CommonSpec {
     it("must fail with JsonParsingException when object tokens with elements not separated by comas on head") {
       val result = JsonParser.parse(Stream(
         CurlyBracketOpenToken,
-        StringToken("abc"), ColonToken, NullToken,
-        StringToken("def"), ColonToken, FalseToken,
+          StringToken("abc"), ColonToken, NullToken,
+          StringToken("def"), ColonToken, FalseToken,
         CurlyBracketCloseToken
       ))
       result.isFailure mustBe true
@@ -253,7 +272,7 @@ class JsonParserSpec extends CommonSpec {
     it("must fail with JsonParsingException when object contains element without key") {
       val result = JsonParser.parse(Stream(
         CurlyBracketOpenToken,
-        ColonToken, NullToken,
+          ColonToken, NullToken,
         CurlyBracketCloseToken
       ))
       result.isFailure mustBe true
@@ -263,7 +282,7 @@ class JsonParserSpec extends CommonSpec {
     it("must fail with JsonParsingException when object is not terminated by CurlyBracketCloseToken") {
       val result = JsonParser.parse(Stream(
         CurlyBracketOpenToken,
-        StringToken("abc"), ColonToken, NullToken
+          StringToken("abc"), ColonToken, NullToken
       ))
       result.isFailure mustBe true
       result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
