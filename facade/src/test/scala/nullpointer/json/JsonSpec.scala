@@ -91,7 +91,7 @@ class JsonSpec extends CommonSpec with TryMatchers {
     }
 
     it("must parse string with escaped unicode character") {
-      val result = Json.parse("\"abc\\u3a9fdef")
+      val result = Json.parse("\"abc\\u3a9fdef\"")
       result must succeedWith[JsonValue](JsonString(s"abc${15007.toChar}def"))
     }
 
