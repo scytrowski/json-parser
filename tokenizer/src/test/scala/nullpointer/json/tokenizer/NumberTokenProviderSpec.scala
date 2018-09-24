@@ -1,15 +1,14 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import nullpointer.json.JsonTokens.NumberToken
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class NumberTokenProviderSpec extends CommonSpec {
+class NumberTokenProviderSpec extends CommonSpec with OptionMatchers {
   describe("A NumberTokenProvider") {
     it("must return correct number and source left when source starts with 0") {
       val result = NumberTokenProvider.provide("0abc")
-      result.isDefined mustBe true
-      result.get mustBe FoundToken("abc", NumberToken(0))
+      result must beDefined(FoundToken("abc", NumberToken(0)))
     }
 
     it("must return correct number and source left when source starts with integer") {
@@ -19,8 +18,7 @@ class NumberTokenProviderSpec extends CommonSpec {
       )
       forAll(integerTestCases) { (source, expectedValue) =>
         val result = NumberTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken("", NumberToken(expectedValue))
+        result must beDefined(FoundToken("", NumberToken(expectedValue)))
       }
     }
 
@@ -31,19 +29,18 @@ class NumberTokenProviderSpec extends CommonSpec {
       )
       forAll(decimalTestCases) { (source, expectedValue) =>
         val result = NumberTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken("", NumberToken(expectedValue))
+        result must beDefined(FoundToken("", NumberToken(expectedValue)))
       }
     }
 
     it("must return None when number is not on head") {
       val result = NumberTokenProvider.provide("abc")
-      result.isEmpty mustBe true
+      result must beEmpty
     }
 
     it("must return None when source is empty") {
       val result = NumberTokenProvider.provide("")
-      result.isEmpty mustBe true
+      result must beEmpty
     }
   }
 }

@@ -1,9 +1,9 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class EscapedCharacterProviderSpec extends CommonSpec {
+class EscapedCharacterProviderSpec extends CommonSpec with OptionMatchers {
   import EscapedCharacterProviderSpec._
 
   describe("An EscapedCharacterProvider") {
@@ -15,8 +15,7 @@ class EscapedCharacterProviderSpec extends CommonSpec {
       it(s"must return correct character and source tail when source head is $char") {
         val source = s"${char}abc"
         val result = EscapedCharacterProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundCharacter(source.tail, expectedResultChar)
+        result must beDefined(FoundCharacter(source.tail, expectedResultChar))
       }
     }
 
@@ -41,13 +40,13 @@ class EscapedCharacterProviderSpec extends CommonSpec {
       forAll(charactersThatCannotBeEscapedTestCases) { char =>
         val source = char.toString
         val result = EscapedCharacterProvider.provide(source)
-        result.isEmpty mustBe true
+        result must beEmpty
       }
     }
 
     it("must return None when source is empty") {
       val result = EscapedCharacterProvider.provide("")
-      result.isEmpty mustBe true
+      result must beEmpty
     }
   }
 }

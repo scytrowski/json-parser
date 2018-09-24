@@ -1,12 +1,10 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import nullpointer.json.tokenizer.UnicodeParser.UnicodeFormatException
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-import scala.util.Failure
-
-class UnicodeParserSpec extends CommonSpec {
+class UnicodeParserSpec extends CommonSpec with TryMatchers {
   describe("An UnicodeParser") {
     it("must return correct character when have valid code string") {
       val validCodeStrings = Table(
@@ -23,8 +21,7 @@ class UnicodeParserSpec extends CommonSpec {
       )
       forAll(validCodeStrings) { (validCodeString, expectedChar) =>
         val result = UnicodeParser.parse(validCodeString)
-        result.isSuccess mustBe true
-        result.get mustBe expectedChar
+        result must succeedWith(expectedChar)
       }
     }
 
@@ -39,8 +36,7 @@ class UnicodeParserSpec extends CommonSpec {
       )
       forAll(invalidCodeStrings) { invalidCodeString =>
         val result = UnicodeParser.parse(invalidCodeString)
-        result.isFailure mustBe true
-        result.asInstanceOf[Failure[Char]].exception.isInstanceOf[UnicodeFormatException] mustBe true
+        result must failWith[UnicodeFormatException]
       }
     }
 
@@ -56,8 +52,7 @@ class UnicodeParserSpec extends CommonSpec {
       )
       forAll(invalidCodeStrings) { invalidCodeString =>
         val result = UnicodeParser.parse(invalidCodeString)
-        result.isFailure mustBe true
-        result.asInstanceOf[Failure[Char]].exception.isInstanceOf[UnicodeFormatException] mustBe true
+        result must failWith[UnicodeFormatException]
       }
     }
   }

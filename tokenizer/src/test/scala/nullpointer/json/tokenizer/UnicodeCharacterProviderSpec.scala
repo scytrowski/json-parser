@@ -1,9 +1,9 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class UnicodeCharacterProviderSpec extends CommonSpec {
+class UnicodeCharacterProviderSpec extends CommonSpec with OptionMatchers {
   import UnicodeCharacterProviderSpec._
 
   describe("An UnicodeCharacterProvider") {
@@ -18,8 +18,7 @@ class UnicodeCharacterProviderSpec extends CommonSpec {
       )
       forAll(correctCodeStringTestCases) { (source, expectedSourceLeft, expectedCharacter) =>
         val result = UnicodeCharacterProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundCharacter(expectedSourceLeft, expectedCharacter)
+        result must beDefined(FoundCharacter(expectedSourceLeft, expectedCharacter))
       }
     }
 
@@ -33,7 +32,7 @@ class UnicodeCharacterProviderSpec extends CommonSpec {
       )
       forAll(incorrectCodeStringTestCases) { source =>
         val result = UnicodeCharacterProvider.provide(source)
-        result.isEmpty mustBe true
+        result must beEmpty
       }
     }
 
@@ -46,13 +45,13 @@ class UnicodeCharacterProviderSpec extends CommonSpec {
       )
       forAll(sourceLengthLessThan4TestCases) { source =>
         val result = UnicodeCharacterProvider.provide(source)
-        result.isEmpty mustBe true
+        result must beEmpty
       }
     }
 
     it("must return None when source is empty") {
       val result = UnicodeCharacterProvider.provide("")
-      result.isEmpty mustBe true
+      result must beEmpty
     }
   }
 }

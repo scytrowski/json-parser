@@ -11,7 +11,7 @@ trait TryMatchers {
 
   def succeedWith[T](expectedValue: T): TrySucceedWithMatcher[T] = new TrySucceedWithMatcher[T](expectedValue)
 
-  def failWith[T, E <: Throwable : ClassTag]: TryFailWithMatcher[E] = new TryFailWithMatcher[E]
+  def failWith[E <: Throwable : ClassTag]: TryFailWithMatcher[E] = new TryFailWithMatcher[E]
 }
 
 object TryMatchers extends MustMatchers {

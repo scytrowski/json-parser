@@ -1,9 +1,9 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class GeneralCharacterProviderSpec extends CommonSpec {
+class GeneralCharacterProviderSpec extends CommonSpec with OptionMatchers {
   import GeneralCharacterProviderSpec._
 
   describe("A GeneralCharacterProvider") {
@@ -16,8 +16,7 @@ class GeneralCharacterProviderSpec extends CommonSpec {
       )
       forAll(characterTestCases) { (source, expectedSourceLeft, expectedCharacter) =>
         val result = GeneralCharacterProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundCharacter(expectedSourceLeft, expectedCharacter)
+        result must beDefined(FoundCharacter(expectedSourceLeft, expectedCharacter))
       }
     }
 
@@ -36,13 +35,12 @@ class GeneralCharacterProviderSpec extends CommonSpec {
 
     it("must return end of string character with correct source left when source head is quotation mark") {
       val result = GeneralCharacterProvider.provide("\"abc")
-      result.isDefined mustBe true
-      result.get mustBe FoundCharacter.endOfString("abc")
+      result must beDefined(FoundCharacter.endOfString("abc"))
     }
 
     it("must return None when source is empty") {
       val result = GeneralCharacterProvider.provide("")
-      result.isEmpty mustBe true
+      result must beEmpty
     }
   }
 }

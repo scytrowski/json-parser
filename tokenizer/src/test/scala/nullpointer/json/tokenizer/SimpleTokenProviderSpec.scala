@@ -1,10 +1,10 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import nullpointer.json.JsonTokens._
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class SimpleTokenProviderSpec extends CommonSpec {
+class SimpleTokenProviderSpec extends CommonSpec with OptionMatchers {
   describe("A SimpleTokenProvider") {
     val definedStrings = Table(
       ("source", "expectedSourceLeft", "expectedToken"),
@@ -21,8 +21,7 @@ class SimpleTokenProviderSpec extends CommonSpec {
     forAll(definedStrings) { (string, expectedSourceLeft, expectedToken) =>
       it(s"must return $expectedToken when head starts with $string") {
         val result = SimpleTokenProvider.provide(string)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, expectedToken)
+        result must beDefined(FoundToken(expectedSourceLeft, expectedToken))
       }
     }
 
@@ -36,7 +35,7 @@ class SimpleTokenProviderSpec extends CommonSpec {
       )
       forAll(undefinedStrings) { undefinedString =>
         val result = SimpleTokenProvider.provide(undefinedString)
-        result.isEmpty mustBe true
+        result must beEmpty
       }
     }
   }

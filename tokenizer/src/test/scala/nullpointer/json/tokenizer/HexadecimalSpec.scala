@@ -1,9 +1,9 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class HexadecimalSpec extends CommonSpec {
+class HexadecimalSpec extends CommonSpec with OptionMatchers {
   import HexadecimalSpec._
 
   describe("Hexadecimal") {
@@ -14,8 +14,7 @@ class HexadecimalSpec extends CommonSpec {
     forAll(validHexadecimalCharCases) { (validHexadecimalChar, expectedValue) =>
       it(s"must return $expectedValue when char is '$validHexadecimalChar'") {
         val result = Hexadecimal.valueOf(validHexadecimalChar)
-        result.isDefined mustBe true
-        result.get mustBe expectedValue
+        result must beDefined(expectedValue)
       }
     }
 
@@ -26,7 +25,7 @@ class HexadecimalSpec extends CommonSpec {
       )
       forAll(invalidHexadecimalCharCases) { invalidHexadecimalChar =>
         val result = Hexadecimal.valueOf(invalidHexadecimalChar)
-        result.isEmpty mustBe true
+        result must beEmpty
       }
     }
   }

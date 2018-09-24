@@ -1,10 +1,10 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import nullpointer.json.JsonTokens.StringToken
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class StringTokenProviderSpec extends CommonSpec {
+class StringTokenProviderSpec extends CommonSpec with OptionMatchers {
   describe("A StringDefinedTokenProvider") {
     it("must return correct StringToken and source left when string on head") {
       val commonStringTestCases = Table(
@@ -15,8 +15,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(commonStringTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -30,8 +29,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedQuotationMarkTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -45,8 +43,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedReverseSolidusTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -60,8 +57,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedSolidusTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -75,8 +71,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedBackspaceTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -90,8 +85,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedFormfeedTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -105,8 +99,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedNewLineTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -120,8 +113,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedCarriageReturnTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -135,8 +127,7 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedHorizontalTabTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
@@ -150,24 +141,23 @@ class StringTokenProviderSpec extends CommonSpec {
       )
       forAll(stringWithEscapedUnicodeCharactersTestCases) { (source, expectedSourceLeft, expectedValue) =>
         val result = StringTokenProvider.provide(source)
-        result.isDefined mustBe true
-        result.get mustBe FoundToken(expectedSourceLeft, StringToken(expectedValue))
+        result must beDefined(FoundToken(expectedSourceLeft, StringToken(expectedValue)))
       }
     }
 
     it("must return None when string is not on head") {
       val result = StringTokenProvider.provide("abc")
-      result.isEmpty mustBe true
+      result must beEmpty
     }
 
     it("must return None when string is not terminated by quotation mark") {
       val result = StringTokenProvider.provide("\"abc")
-      result.isEmpty mustBe true
+      result must beEmpty
     }
 
     it("must return None when source is empty") {
       val result = StringTokenProvider.provide("")
-      result.isEmpty mustBe true
+      result must beEmpty
     }
   }
 }
