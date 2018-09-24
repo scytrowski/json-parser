@@ -144,5 +144,16 @@ class JsonTokenizerSpec extends CommonSpec {
       val tokens = JsonTokenizer.tokenize("a")
       tokens.head mustBe UnknownToken("a")
     }
+
+    it("must emit correct tokens when separated by whitespaces in source") {
+      val tokens = JsonTokenizer.tokenize("{ null\t]   156")
+      tokens.take(5) must contain theSameElementsAs Seq(
+        CurlyBracketOpenToken,
+        NullToken,
+        SquareBracketCloseToken,
+        NumberToken(156),
+        EndOfSourceToken
+      )
+    }
   }
 }
