@@ -139,5 +139,10 @@ class JsonTokenizerSpec extends CommonSpec {
       val tokens = JsonTokenizer.tokenize("")
       tokens.tail.head mustBe EndOfSourceToken
     }
+
+    it("must emit UnknownToken when unable to recognize character on head") {
+      val tokens = JsonTokenizer.tokenize("a")
+      tokens.head mustBe UnknownToken("a")
+    }
   }
 }

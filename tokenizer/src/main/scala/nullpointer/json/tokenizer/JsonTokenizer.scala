@@ -1,6 +1,6 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.JsonTokens.JsonToken
+import nullpointer.json.JsonTokens.{JsonToken, UnknownToken}
 
 object JsonTokenizer {
   def tokenize(source: String): Stream[JsonToken] =
@@ -8,17 +8,19 @@ object JsonTokenizer {
       case FoundToken(sourceLeft, _) =>
         if (!sourceLeft.isEmpty)
           (sourceLeft #:: sourceLeft.tails.toStream)
+            .filterNot(_.head.isWhitespace)
             .map(findToken)
-            .dropWhile(_.isEmpty)
-            .map(_.get)
-            .headOption
-            .getOrElse(FoundToken.endOfSource)
+            .head
         else
           FoundToken.endOfSource
     }.tail.map(_.token)
 
-  private def findToken(source: String): Option[FoundToken] =
+  private def findToken(source: String): FoundToken =
     SimpleTokenProvider.provide(source)
       .orElse(NumberTokenProvider.provide(source))
       .orElse(StringTokenProvider.provide(source))
+      .getOrElse(createUnknownToken(source))
+
+  private def createUnknownToken(source: String): FoundToken =
+    FoundToken(source.tail, UnknownToken(source.head.toString))
 }

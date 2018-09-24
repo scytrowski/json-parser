@@ -18,4 +18,6 @@ object JsonTokens {
 
   case object StartOfSourceToken extends JsonToken
   case object EndOfSourceToken extends JsonToken
+
+  case class UnknownToken(data: String) extends JsonToken
 }
