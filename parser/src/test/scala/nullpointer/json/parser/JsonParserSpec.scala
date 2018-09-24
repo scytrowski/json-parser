@@ -289,5 +289,10 @@ class JsonParserSpec extends CommonSpec with TryMatchers {
       val result = JsonParser.parse(Stream(CurlyBracketCloseToken))
       result must failWith[JsonParsingException]
     }
+
+    it("must fail with JsonParsingException when UnknownToken on head") {
+      val result = JsonParser.parse(Stream(UnknownToken("abc")))
+      result must failWith[JsonParsingException]
+    }
   }
 }

@@ -68,5 +68,10 @@ class GeneralTokenEaterSpec extends CommonSpec with TryMatchers {
       val result = GeneralTokenEater.eat(Stream(CurlyBracketCloseToken))
       result must failWith[JsonParsingException]
     }
+
+    it("must fail with JsonParsingException when tokens head is UnknownToken") {
+      val result = GeneralTokenEater.eat(Stream(UnknownToken("abc")))
+      result must failWith[JsonParsingException]
+    }
   }
 }
