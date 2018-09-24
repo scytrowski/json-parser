@@ -1,129 +1,108 @@
 package nullpointer.json
 
-import nullpointer.json.testing.CommonSpec
-
+import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import nullpointer.json.JsonValues._
 
-class JsonSpec extends CommonSpec {
+class JsonSpec extends CommonSpec with TryMatchers {
   describe("Json") {
     it("must parse null") {
       val result = Json.parse("null")
-      result.isSuccess mustBe true
-      result.get mustBe JsonNull
+      result must succeedWith[JsonValue](JsonNull)
     }
 
     it("must parse boolean false") {
       val result = Json.parse("false")
-      result.isSuccess mustBe true
-      result.get mustBe JsonBoolean(false)
+      result must succeedWith[JsonValue](JsonBoolean(false))
     }
 
     it("must parse boolean true") {
       val result = Json.parse("true")
-      result.isSuccess mustBe true
-      result.get mustBe JsonBoolean(true)
+      result must succeedWith[JsonValue](JsonBoolean(true))
     }
 
     it("must parse zero") {
       val result = Json.parse("0")
-      result.isSuccess mustBe true
-      result.get mustBe JsonNumber(0)
+      result must succeedWith[JsonValue](JsonNumber(0))
     }
 
     it("must parse negative integer") {
       val result = Json.parse("-579")
-      result.isSuccess mustBe true
-      result.get mustBe JsonNumber(-579)
+      result must succeedWith[JsonValue](JsonNumber(-579))
     }
 
     it("must parse positive integer") {
       val result = Json.parse("791")
-      result.isSuccess mustBe true
-      result.get mustBe JsonNumber(791)
+      result must succeedWith[JsonValue](JsonNumber(791))
     }
 
     it("must parse negative decimal") {
       val result = Json.parse("-105.69213")
-      result.isSuccess mustBe true
-      result.get mustBe JsonNumber(-105.69213)
+      result must succeedWith[JsonValue](JsonNumber(-105.69213))
     }
 
     it("must parse positive decimal") {
       val result = Json.parse("4056.791")
-      result.isSuccess mustBe true
-      result.get mustBe JsonNumber(4056.791)
+      result must succeedWith[JsonValue](JsonNumber(4056.791))
     }
 
     it("must parse empty string") {
       val result = Json.parse("\"\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("")
+      result must succeedWith[JsonValue](JsonString(""))
     }
 
     it("must parse string") {
       val result = Json.parse("\"abcdefghij\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("abcdefghij")
+      result must succeedWith[JsonValue](JsonString("abcdefghij"))
     }
 
     it("must parse string with escaped quotation mark") {
       val result = Json.parse("\"abc\\\"def\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("abc\"def")
+      result must succeedWith[JsonValue](JsonString("abc\"def"))
     }
 
     it("must parse string with escaped reverse solidus") {
       val result = Json.parse("\"abc\\\\def\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("abc\\def")
+      result must succeedWith[JsonValue](JsonString("abc\\def"))
     }
 
     it("must parse string with escaped solidus") {
       val result = Json.parse("\"abc\\/def\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("abc/def")
+      result must succeedWith[JsonValue](JsonString("abc/def"))
     }
 
     it("must parse string with escaped backspace") {
       val result = Json.parse("\"abc\\bdef\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString(s"abc${8.toChar}def")
+      result must succeedWith[JsonValue](JsonString(s"abc${8.toChar}def"))
     }
 
     it("must parse string with escaped formfeed") {
       val result = Json.parse("\"abc\\fdef\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString(s"abc${12.toChar}def")
+      result must succeedWith[JsonValue](JsonString(s"abc${12.toChar}def"))
     }
 
     it("must parse string with escaped newline") {
       val result = Json.parse("\"abc\\ndef\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("abc\ndef")
+      result must succeedWith[JsonValue](JsonString("abc\ndef"))
     }
 
     it("must parse string with escaped carriage return") {
       val result = Json.parse("\"abc\\rdef\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("abc\rdef")
+      result must succeedWith[JsonValue](JsonString("abc\rdef"))
     }
 
     it("must parse string with escaped unicode character") {
       val result = Json.parse("\"abc\\u3a9fdef")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString(s"abc${15007.toChar}def")
+      result must succeedWith[JsonValue](JsonString(s"abc${15007.toChar}def"))
     }
 
     it("must parse string with escaped horizontal tab") {
       val result = Json.parse("\"abc\\tdef\"")
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("abc\tdef")
+      result must succeedWith[JsonValue](JsonString("abc\tdef"))
     }
 
     it("must parse empty array") {
       val result = Json.parse("[]")
-      result.isSuccess mustBe true
-      result.get mustBe JsonArray(List.empty)
+      result must succeedWith[JsonValue](JsonArray(List.empty))
     }
 
     it("must parse array") {
@@ -142,8 +121,7 @@ class JsonSpec extends CommonSpec {
 
     it("must parse empty object") {
       val result = Json.parse("{}")
-      result.isSuccess mustBe true
-      result.get mustBe JsonObject()
+      result must succeedWith[JsonValue](JsonObject())
     }
 
     it("must parse object") {
