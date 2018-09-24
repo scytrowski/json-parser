@@ -1,14 +1,12 @@
 package nullpointer.json.parser
 
-import nullpointer.json.parser.JsonParser.JsonParsingException
-import nullpointer.json.testing.CommonSpec
 import nullpointer.json.JsonTokens._
 import nullpointer.json.JsonValues._
+import nullpointer.json.parser.JsonParser.JsonParsingException
+import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-import scala.util.Failure
-
-class ArrayTokenEaterSpec extends CommonSpec {
+class ArrayTokenEaterSpec extends CommonSpec with TryMatchers {
   describe("An ArrayTokenEater") {
     it("must return empty array with correct tokens left when SquareBracketOpenToken followed by SquareBracketCloseToken on head") {
       val result = ArrayTokenEater.eat(Stream(
@@ -16,8 +14,7 @@ class ArrayTokenEaterSpec extends CommonSpec {
         SquareBracketCloseToken,
         NullToken,
         FalseToken))
-      result.isSuccess mustBe true
-      result.get mustBe FoundValue(Stream(NullToken, FalseToken), JsonArray())
+      result must succeedWith(FoundValue(Stream(NullToken, FalseToken), JsonArray()))
     }
 
     it("must return array with correct single element and correct tokens left when tokens contain array with simple token") {
@@ -51,8 +48,7 @@ class ArrayTokenEaterSpec extends CommonSpec {
       )
       forAll(arrayWithSingleElementCases) { (tokens, expectedTokensLeft, expectedValue) =>
         val result = ArrayTokenEater.eat(tokens)
-        result.isSuccess mustBe true
-        result.get mustBe FoundValue(expectedTokensLeft.toStream, expectedValue)
+        result must succeedWith(FoundValue(expectedTokensLeft.toStream, expectedValue))
       }
     }
 
@@ -90,8 +86,7 @@ class ArrayTokenEaterSpec extends CommonSpec {
       )
       forAll(arrayWithMultipleElementCases) { (tokens, expectedTokensLeft, expectedValue) =>
         val result = ArrayTokenEater.eat(tokens)
-        result.isSuccess mustBe true
-        result.get mustBe FoundValue(expectedTokensLeft.toStream, expectedValue)
+        result must succeedWith(FoundValue(expectedTokensLeft.toStream, expectedValue))
       }
     }
 
@@ -104,8 +99,7 @@ class ArrayTokenEaterSpec extends CommonSpec {
         SquareBracketCloseToken,
         TrueToken, NullToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe FoundValue(Stream(TrueToken, NullToken), JsonArray(JsonArray(JsonBoolean(false))))
+      result must succeedWith(FoundValue(Stream(TrueToken, NullToken), JsonArray(JsonArray(JsonBoolean(false)))))
     }
 
     it("must return array with correct tokens left when tokens contain array with object") {
@@ -119,20 +113,17 @@ class ArrayTokenEaterSpec extends CommonSpec {
         SquareBracketCloseToken,
         NullToken, FalseToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe FoundValue(Stream(NullToken, FalseToken), JsonArray(JsonObject("abc" -> JsonNumber(1234))))
+      result must succeedWith(FoundValue(Stream(NullToken, FalseToken), JsonArray(JsonObject("abc" -> JsonNumber(1234)))))
     }
 
     it("must fail with JsonParsingException when tokens input is empty") {
       val result = ArrayTokenEater.eat(Stream.empty)
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when tokens head is not SquareBracketOpenToken") {
       val result = ArrayTokenEater.eat(Stream(NullToken))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when tokens contain array of elements not separated by ComaToken") {
@@ -142,14 +133,12 @@ class ArrayTokenEaterSpec extends CommonSpec {
           NullToken,
         SquareBracketCloseToken
       ))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when array tokens sequence does not end with SquareBracketCloseToken") {
       val result = ArrayTokenEater.eat(Stream(SquareBracketOpenToken))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
   }
 }

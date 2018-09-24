@@ -1,44 +1,38 @@
 package nullpointer.json.parser
 
 import nullpointer.json.parser.JsonParser.JsonParsingException
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
-
 import nullpointer.json.JsonTokens._
 import nullpointer.json.JsonValues._
 
 import scala.util.Failure
 
-class JsonParserSpec extends CommonSpec {
+class JsonParserSpec extends CommonSpec with TryMatchers {
   describe("A JsonParser") {
     it("must return JsonNull when NullToken on head") {
       val result = JsonParser.parse(Stream(NullToken))
-      result.isSuccess mustBe true
-      result.get mustBe JsonNull
+      result must succeedWith[JsonValue](JsonNull)
     }
 
     it("must return JsonBoolean(false) when FalseToken on head") {
       val result = JsonParser.parse(Stream(FalseToken))
-      result.isSuccess mustBe true
-      result.get mustBe JsonBoolean(false)
+      result must succeedWith[JsonValue](JsonBoolean(false))
     }
 
     it("must return JsonBoolean(true) when TrueToken on head") {
       val result = JsonParser.parse(Stream(TrueToken))
-      result.isSuccess mustBe true
-      result.get mustBe JsonBoolean(true)
+      result must succeedWith[JsonValue](JsonBoolean(true))
     }
 
     it("must return JsonNumber with correct value when NumberToken on head") {
       val result = JsonParser.parse(Stream(NumberToken(-967.1335)))
-      result.isSuccess mustBe true
-      result.get mustBe JsonNumber(-967.1335)
+      result must succeedWith[JsonValue](JsonNumber(-967.1335))
     }
 
     it("must return JsonString with correct value when StringToken on head") {
       val result = JsonParser.parse(Stream(StringToken("alpo399v,>134!^3!lo")))
-      result.isSuccess mustBe true
-      result.get mustBe JsonString("alpo399v,>134!^3!lo")
+      result must succeedWith[JsonValue](JsonString("alpo399v,>134!^3!lo"))
     }
 
     it("must return empty array when SquareBracketOpenToken followed by SquareBracketCloseToken on head") {
@@ -46,8 +40,7 @@ class JsonParserSpec extends CommonSpec {
         SquareBracketOpenToken,
         SquareBracketCloseToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe JsonArray()
+      result must succeedWith[JsonValue](JsonArray())
     }
 
     it("must return correct array when SquareBracketOpenToken followed by single element token followed by SquareBracketCloseToken on head") {
@@ -71,8 +64,7 @@ class JsonParserSpec extends CommonSpec {
       )
       forAll(arrayWithSingleElementCases) { (tokenSequence, expectedValue) =>
         val result = JsonParser.parse(tokenSequence)
-        result.isSuccess mustBe true
-        result.get mustBe expectedValue
+        result must succeedWith[JsonValue](expectedValue)
       }
     }
 
@@ -100,8 +92,7 @@ class JsonParserSpec extends CommonSpec {
       )
       forAll(arrayWithMultipleElementCases) { (tokenSequence, expectedValue) =>
         val result = JsonParser.parse(tokenSequence)
-        result.isSuccess mustBe true
-        result.get mustBe expectedValue
+        result must succeedWith[JsonValue](expectedValue)
       }
     }
 
@@ -113,8 +104,7 @@ class JsonParserSpec extends CommonSpec {
             NumberToken(-15.712), ComaToken,
           SquareBracketCloseToken,
         SquareBracketCloseToken))
-      result.isSuccess mustBe true
-      result.get mustBe JsonArray(JsonArray(JsonBoolean(true), JsonNumber(-15.712)))
+      result must succeedWith[JsonValue](JsonArray(JsonArray(JsonBoolean(true), JsonNumber(-15.712))))
     }
 
     it("must return correct array when contain object") {
@@ -125,10 +115,9 @@ class JsonParserSpec extends CommonSpec {
           CurlyBracketCloseToken,
         SquareBracketCloseToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe JsonArray(JsonObject(
+      result must succeedWith[JsonValue](JsonArray(JsonObject(
         "abc" -> JsonString("def")
-      ))
+      )))
     }
 
     it("must fail with JsonParsingException when array is not terminated by SquareBracketCloseToken") {
@@ -136,8 +125,7 @@ class JsonParserSpec extends CommonSpec {
         SquareBracketOpenToken,
           NullToken
       ))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must return empty object when CurlyBracketOpenToken followed by CurlyBracketCloseToken on head") {
@@ -145,8 +133,7 @@ class JsonParserSpec extends CommonSpec {
         CurlyBracketOpenToken,
         CurlyBracketCloseToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe JsonObject()
+      result must succeedWith[JsonValue](JsonObject())
     }
 
     it("must return correct object when CurlyBracketOpenToken followed by StringToken, ColonToken and single element token followed by CurlyBracketCloseToken on head") {
@@ -180,8 +167,7 @@ class JsonParserSpec extends CommonSpec {
       )
       forAll(objectWithSingleElementCases) { (tokenSequence, expectedValue) =>
         val result = JsonParser.parse(tokenSequence)
-        result.isSuccess mustBe true
-        result.get mustBe expectedValue
+        result must succeedWith[JsonValue](expectedValue)
       }
     }
 
@@ -222,8 +208,7 @@ class JsonParserSpec extends CommonSpec {
       )
       forAll(objectWithMultipleElementCases) { (tokenSequence, expectedValue) =>
         val result = JsonParser.parse(tokenSequence)
-        result.isSuccess mustBe true
-        result.get mustBe expectedValue
+        result must succeedWith[JsonValue](expectedValue)
       }
     }
 
@@ -236,12 +221,11 @@ class JsonParserSpec extends CommonSpec {
           CurlyBracketCloseToken,
         CurlyBracketCloseToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe JsonObject(
+      result must succeedWith[JsonValue](JsonObject(
         "abc" -> JsonObject(
           "def" -> JsonNumber(1337)
         )
-      )
+      ))
     }
 
     it("must return correct object when contain array") {
@@ -253,10 +237,9 @@ class JsonParserSpec extends CommonSpec {
           SquareBracketCloseToken,
         CurlyBracketCloseToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe JsonObject(
+      result must succeedWith[JsonValue](JsonObject(
         "abc" -> JsonArray(JsonNumber(69.013))
-      )
+      ))
     }
 
     it("must fail with JsonParsingException when object tokens with elements not separated by comas on head") {
@@ -266,8 +249,7 @@ class JsonParserSpec extends CommonSpec {
           StringToken("def"), ColonToken, FalseToken,
         CurlyBracketCloseToken
       ))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when object contains element without key") {
@@ -276,8 +258,7 @@ class JsonParserSpec extends CommonSpec {
           ColonToken, NullToken,
         CurlyBracketCloseToken
       ))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when object is not terminated by CurlyBracketCloseToken") {
@@ -291,26 +272,22 @@ class JsonParserSpec extends CommonSpec {
 
     it("must fail with JsonParsingException when ColonToken on head") {
       val result = JsonParser.parse(Stream(ColonToken))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when ComaToken on head") {
       val result = JsonParser.parse(Stream(ComaToken))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when SquareBracketCloseToken on head") {
       val result = JsonParser.parse(Stream(SquareBracketCloseToken))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when CurlyBracketCloseToken on head") {
       val result = JsonParser.parse(Stream(CurlyBracketCloseToken))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[JsonValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
   }
 }

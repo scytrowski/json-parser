@@ -3,17 +3,16 @@ package nullpointer.json.parser
 import nullpointer.json.JsonTokens._
 import nullpointer.json.JsonValues._
 import nullpointer.json.parser.JsonParser.JsonParsingException
-import nullpointer.json.testing.CommonSpec
+import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import scala.util.Failure
 
-class ObjectTokenEaterSpec extends CommonSpec {
+class ObjectTokenEaterSpec extends CommonSpec with TryMatchers {
   describe("An ObjectTokenEater") {
     it("must return empty object and correct tokens left when CurlyBracketOpenToken followed by CurlyBracketCloseToken on head") {
       val result = ObjectTokenEater.eat(Stream(CurlyBracketOpenToken, CurlyBracketCloseToken, NullToken, TrueToken))
-      result.isSuccess mustBe true
-      result.get mustBe FoundValue(Stream(NullToken, TrueToken), JsonObject())
+      result must succeedWith(FoundValue(Stream(NullToken, TrueToken), JsonObject()))
     }
 
     it("must return object with correct single element and correct tokens left when tokens contain object with key and simple token") {
@@ -47,8 +46,7 @@ class ObjectTokenEaterSpec extends CommonSpec {
       )
       forAll(objectWithSingleElementCases) { (tokens, expectedTokensLeft, expectedValue) =>
         val result = ObjectTokenEater.eat(tokens)
-        result.isSuccess mustBe true
-        result.get mustBe FoundValue(expectedTokensLeft.toStream, expectedValue)
+        result must succeedWith(FoundValue(expectedTokensLeft.toStream, expectedValue))
       }
     }
 
@@ -86,8 +84,7 @@ class ObjectTokenEaterSpec extends CommonSpec {
       )
       forAll(objectWithMultipleElementCases) { (tokens, expecteddTokensLeft, expectedValue) =>
         val result = ObjectTokenEater.eat(tokens)
-        result.isSuccess mustBe true
-        result.get mustBe FoundValue(expecteddTokensLeft.toStream, expectedValue)
+        result must succeedWith(FoundValue(expecteddTokensLeft.toStream, expectedValue))
       }
     }
 
@@ -101,8 +98,7 @@ class ObjectTokenEaterSpec extends CommonSpec {
         CurlyBracketCloseToken,
         TrueToken, NullToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe FoundValue(Stream(TrueToken, NullToken), JsonObject("abc" -> JsonObject("def" -> JsonNull)))
+      result must succeedWith(FoundValue(Stream(TrueToken, NullToken), JsonObject("abc" -> JsonObject("def" -> JsonNull))))
     }
 
     it("must return object with correct tokens left when tokens contain object with array") {
@@ -115,20 +111,17 @@ class ObjectTokenEaterSpec extends CommonSpec {
         CurlyBracketCloseToken,
         NullToken, FalseToken
       ))
-      result.isSuccess mustBe true
-      result.get mustBe FoundValue(Stream(NullToken, FalseToken), JsonObject("abc" -> JsonArray(JsonNull)))
+      result must succeedWith(FoundValue(Stream(NullToken, FalseToken), JsonObject("abc" -> JsonArray(JsonNull))))
     }
 
     it("must fail with JsonParsingException when tokens input is empty") {
       val result = ObjectTokenEater.eat(Stream.empty)
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when tokens head is not CurlyBracketOpenToken") {
       val result = ObjectTokenEater.eat(Stream(NullToken))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when tokens contain object of elements with not separated key and value by ColonToken") {
@@ -137,8 +130,7 @@ class ObjectTokenEaterSpec extends CommonSpec {
           StringToken("abc"), NullToken,
         CurlyBracketCloseToken
       ))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when tokens contain object of elements not separated by ComaToken") {
@@ -148,14 +140,12 @@ class ObjectTokenEaterSpec extends CommonSpec {
           StringToken("def"), FalseToken,
         CurlyBracketCloseToken
       ))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
 
     it("must fail with JsonParsingException when object tokens sequence does not end with CurlyBracketCloseToken") {
       val result = ObjectTokenEater.eat(Stream(CurlyBracketOpenToken))
-      result.isFailure mustBe true
-      result.asInstanceOf[Failure[FoundValue]].exception.isInstanceOf[JsonParsingException] mustBe true
+      result must failWith[JsonParsingException]
     }
   }
 }
