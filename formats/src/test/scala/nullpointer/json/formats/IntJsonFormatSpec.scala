@@ -26,8 +26,8 @@ class IntJsonFormatSpec extends CommonSpec with TryMatchers {
       val deserializeJsonNumberTestCases = Table(
         ("json", "expectedNumber"),
         (1 to 100)
-          .map(_ => Random.nextInt)
-          .map(n => JsonNumber(n) -> n):_*
+          .map(_ => Random.nextDouble)
+          .map(n => JsonNumber(n) -> n.toInt):_*
       )
       forAll(deserializeJsonNumberTestCases) { (json, expectedNumber) =>
         val result = IntJsonFormat.deserialize(json)
