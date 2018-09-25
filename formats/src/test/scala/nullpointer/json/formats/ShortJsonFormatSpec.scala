@@ -56,7 +56,7 @@ class ShortJsonFormatSpec extends CommonSpec with TryMatchers {
 }
 
 private object ShortJsonFormatSpec {
-  private lazy val nextShortUpperBound: Int = Short.MaxValue + Short.MinValue.abs
+  private lazy val nextShortUpperBound: Int = Short.MaxValue + Short.MinValue.toInt.abs
 
   def nextShort: Short =
     (Random.nextInt(nextShortUpperBound) - Short.MinValue.abs).toShort
