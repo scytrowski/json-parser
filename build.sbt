@@ -29,6 +29,10 @@ lazy val parser = (project in file("parser"))
   .dependsOn(core, test_utils)
   .settings(libraryDependencies ++= testDependencies)
 
+lazy val formats = (project in file("formats"))
+  .dependsOn(core, test_utils)
+  .settings(libraryDependencies ++= testDependencies)
+
 lazy val facade = (project in file("facade"))
   .dependsOn(core, tokenizer, parser)
   .settings(libraryDependencies ++= testDependencies)
