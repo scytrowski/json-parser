@@ -1,6 +1,6 @@
 package nullpointer.json.formats
 
-import nullpointer.json.JsonValues.{JsonString, JsonValue}
+import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
 import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -51,6 +51,22 @@ class CharJsonFormatSpec extends CommonSpec with TryMatchers {
       )
       forAll(failingDeserializationWithMultiCharValueTestCases) { value =>
         val result = CharJsonFormat.deserialize(JsonString(value))
+        result must failWith[JsonDeserializationException]
+      }
+    }
+
+    it("must fail with JsonDeserializationException on deserialization when JSON is not JsonString") {
+      val failingDeserializationTestCases = Table(
+        "json",
+        JsonNull,
+        JsonBoolean(false),
+        JsonBoolean(true),
+        JsonNumber(123),
+        JsonArray(JsonBoolean(true), JsonNull),
+        JsonObject("a" -> JsonNull, "b" -> JsonBoolean(false))
+      )
+      forAll(failingDeserializationTestCases) { json =>
+        val result = CharJsonFormat.deserialize(json)
         result must failWith[JsonDeserializationException]
       }
     }
