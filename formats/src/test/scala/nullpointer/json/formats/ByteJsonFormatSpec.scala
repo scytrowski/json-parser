@@ -2,12 +2,12 @@ package nullpointer.json.formats
 
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
-import nullpointer.json.testing.{CommonSpec, TryMatchers}
+import nullpointer.json.testing.{CommonSpec, JsonFormatSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import scala.util.Random
 
-class ByteJsonFormatSpec extends CommonSpec with TryMatchers {
+class ByteJsonFormatSpec extends JsonFormatSpec {
   import ByteJsonFormatSpec._
 
   describe("A ByteJsonFormat") {

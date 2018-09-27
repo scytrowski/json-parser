@@ -2,12 +2,12 @@ package nullpointer.json.formats
 
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
-import nullpointer.json.testing.{CommonSpec, TryMatchers}
+import nullpointer.json.testing.{CommonSpec, JsonFormatSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import scala.util.Random
 
-class LongJsonFormatSpec extends CommonSpec with TryMatchers {
+class LongJsonFormatSpec extends JsonFormatSpec {
   describe("A LongJsonFormat") {
     it("must serialize to JsonNumber with correct value") {
       // TODO: Check overflow issues during Long -> Double conversion

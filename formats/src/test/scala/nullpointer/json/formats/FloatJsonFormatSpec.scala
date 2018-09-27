@@ -2,12 +2,12 @@ package nullpointer.json.formats
 
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
-import nullpointer.json.testing.{CommonSpec, TryMatchers}
+import nullpointer.json.testing.{CommonSpec, JsonFormatSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import scala.util.Random
 
-class FloatJsonFormatSpec extends CommonSpec with TryMatchers {
+class FloatJsonFormatSpec extends JsonFormatSpec {
   describe("A FloatJsonFormat") {
     it("must serialize to JsonNumber with correct value") {
       val serializeFloatTestCases = Table(

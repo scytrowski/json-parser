@@ -2,12 +2,12 @@ package nullpointer.json.formats
 
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
-import nullpointer.json.testing.{CommonSpec, TryMatchers}
+import nullpointer.json.testing.{CommonSpec, JsonFormatSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import scala.util.Random
 
-class DoubleJsonFormatSpec extends CommonSpec with TryMatchers {
+class DoubleJsonFormatSpec extends JsonFormatSpec {
   describe("A DoubleJsonFormat") {
     it("must serialize to JsonNumber with correct value") {
       val serializeDoubleTestCases = Table(
