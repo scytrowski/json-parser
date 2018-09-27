@@ -1,7 +1,7 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.CommonSpec
 import nullpointer.json.JsonTokens._
+import nullpointer.json.testing.CommonSpec
 
 class JsonTokenizerSpec extends CommonSpec {
   describe("A JsonTokenizer") {

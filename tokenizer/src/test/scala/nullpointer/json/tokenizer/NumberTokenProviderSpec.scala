@@ -1,7 +1,7 @@
 package nullpointer.json.tokenizer
 
-import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import nullpointer.json.JsonTokens.NumberToken
+import nullpointer.json.testing.{CommonSpec, OptionMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class NumberTokenProviderSpec extends CommonSpec with OptionMatchers {

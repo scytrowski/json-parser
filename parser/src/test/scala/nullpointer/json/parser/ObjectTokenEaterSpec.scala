@@ -6,8 +6,6 @@ import nullpointer.json.parser.JsonParser.JsonParsingException
 import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-import scala.util.Failure
-
 class ObjectTokenEaterSpec extends CommonSpec with TryMatchers {
   describe("An ObjectTokenEater") {
     it("must return empty object and correct tokens left when CurlyBracketOpenToken followed by CurlyBracketCloseToken on head") {

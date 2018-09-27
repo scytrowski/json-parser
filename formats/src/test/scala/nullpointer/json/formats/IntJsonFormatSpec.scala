@@ -2,7 +2,7 @@ package nullpointer.json.formats
 
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
-import nullpointer.json.testing.{CommonSpec, JsonFormatSpec, TryMatchers}
+import nullpointer.json.testing.JsonFormatSpec
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import scala.util.Random

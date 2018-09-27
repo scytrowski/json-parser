@@ -1,10 +1,10 @@
 package nullpointer.json.parser
 
+import nullpointer.json.JsonTokens._
+import nullpointer.json.JsonValues._
 import nullpointer.json.parser.JsonParser.JsonParsingException
 import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import nullpointer.json.JsonTokens._
-import nullpointer.json.JsonValues._
 
 import scala.util.Failure
 

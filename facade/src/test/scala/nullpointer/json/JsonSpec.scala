@@ -1,7 +1,7 @@
 package nullpointer.json
 
-import nullpointer.json.testing.{CommonSpec, TryMatchers}
 import nullpointer.json.JsonValues._
+import nullpointer.json.testing.{CommonSpec, TryMatchers}
 
 class JsonSpec extends CommonSpec with TryMatchers {
   describe("Json") {
