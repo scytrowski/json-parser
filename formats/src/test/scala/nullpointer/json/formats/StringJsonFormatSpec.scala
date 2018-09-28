@@ -3,19 +3,17 @@ package nullpointer.json.formats
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
 import nullpointer.json.testing.JsonFormatSpec
+import nullpointer.json.testing.random.RandomDataProvider
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-import scala.util.Random
-
 class StringJsonFormatSpec extends JsonFormatSpec {
+  import StringJsonFormatSpec._
+
   describe("A StringJsonFormat") {
     it("must serialize to JsonString with correct value") {
       val serializeStringTestCases = Table(
         ("string", "expectedValue"),
-        (1 to 100)
-          .map(_ => Random.nextInt(100000))
-          .map(n => Random.nextString(n))
-          .map(s => s -> JsonString(s)):_*
+        Strings.map(s => s -> JsonString(s)):_*
       )
       forAll(serializeStringTestCases) { (string, expectedValue) =>
         val result = StringJsonFormat.serialize(string)
@@ -26,10 +24,7 @@ class StringJsonFormatSpec extends JsonFormatSpec {
     it("must deserialize JsonString to correct String") {
       val deserializeJsonStringTestCases = Table(
         ("json", "expectedString"),
-        (1 to 100)
-          .map(_ => Random.nextInt(100000))
-          .map(n => Random.nextString(n))
-          .map(s => JsonString(s) -> s):_*
+        Strings.map(s => JsonString(s) -> s):_*
       )
       forAll(deserializeJsonStringTestCases) { (json, expectedString) =>
         val result = StringJsonFormat.deserialize(json)
@@ -53,4 +48,17 @@ class StringJsonFormatSpec extends JsonFormatSpec {
       }
     }
   }
+}
+
+private object StringJsonFormatSpec {
+  private lazy val triesPerTest = 100
+  private lazy val minimumLength = 1
+  private lazy val maximumLength = 10000
+
+  lazy val Strings: Seq[String] =
+    RandomDataProvider
+      .provideStrings(minimumLength, maximumLength)
+      .distinct
+      .take(triesPerTest)
+      .toList
 }

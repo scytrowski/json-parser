@@ -3,9 +3,8 @@ package nullpointer.json.formats
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
 import nullpointer.json.testing.JsonFormatSpec
+import nullpointer.json.testing.random.RandomDataProvider
 import org.scalatest.prop.TableDrivenPropertyChecks._
-
-import scala.util.Random
 
 class ShortJsonFormatSpec extends JsonFormatSpec {
   import ShortJsonFormatSpec._
@@ -14,9 +13,7 @@ class ShortJsonFormatSpec extends JsonFormatSpec {
     it("must serialize to JsonNumber with correct value") {
       val serializeShortTestCases = Table(
         ("number", "expectedValue"),
-        (1 to 100)
-          .map(_ => nextShort)
-          .map(n => n -> JsonNumber(n)):_*
+        Shorts.map(n => n -> JsonNumber(n)):_*
       )
       forAll(serializeShortTestCases) { (number, expectedValue) =>
         val result = ShortJsonFormat.serialize(number)
@@ -27,9 +24,7 @@ class ShortJsonFormatSpec extends JsonFormatSpec {
     it("must deserialize JsonNumber to correct Short") {
       val deserializeJsonNumberTestCases = Table(
         ("json", "expectedNumber"),
-        (1 to 100)
-          .map(_ => Random.nextDouble)
-          .map(n => JsonNumber(n) -> n.toShort):_*
+        Shorts.map(n => JsonNumber(n) -> n):_*
       )
       forAll(deserializeJsonNumberTestCases) { (json, expectedNumber) =>
         val result = ShortJsonFormat.deserialize(json)
@@ -56,8 +51,12 @@ class ShortJsonFormatSpec extends JsonFormatSpec {
 }
 
 private object ShortJsonFormatSpec {
-  private lazy val nextShortUpperBound: Int = Short.MaxValue + Short.MinValue.toInt.abs
+  private lazy val triesPerTest = 100
 
-  def nextShort: Short =
-    (Random.nextInt(nextShortUpperBound) - Short.MinValue.abs).toShort
+  lazy val Shorts: Seq[Short] =
+    RandomDataProvider
+      .provideShorts
+      .distinct
+      .take(triesPerTest)
+      .toList
 }

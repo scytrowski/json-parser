@@ -3,21 +3,17 @@ package nullpointer.json.formats
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
 import nullpointer.json.testing.JsonFormatSpec
+import nullpointer.json.testing.random.RandomDataProvider
 import org.scalatest.prop.TableDrivenPropertyChecks._
-
-import scala.util.Random
 
 class ByteJsonFormatSpec extends JsonFormatSpec {
   import ByteJsonFormatSpec._
 
   describe("A ByteJsonFormat") {
     it("must serialize to JsonNumber with correct value") {
-      // TODO: Generate DISTINCT numbers
       val serializeByteTestCases = Table(
         ("number", "expectedValue"),
-        (1 to 100)
-          .map(_ => nextByte)
-          .map(n => n -> JsonNumber(n)):_*
+        Bytes.map(n => n -> JsonNumber(n)):_*
       )
       forAll(serializeByteTestCases) { (number, expectedValue) =>
         val result = ByteJsonFormat.serialize(number)
@@ -28,9 +24,7 @@ class ByteJsonFormatSpec extends JsonFormatSpec {
     it("must deserialize JsonNumber to correct Byte") {
       val deserializeJsonNumberTestCases = Table(
         ("json", "expectedNumber"),
-        (1 to 100)
-          .map(_ => Random.nextDouble)
-          .map(n => JsonNumber(n) -> n.toByte):_*
+        Bytes.map(n => JsonNumber(n) -> n.toByte):_*
       )
       forAll(deserializeJsonNumberTestCases) { (json, expectedNumber) =>
         val result = ByteJsonFormat.deserialize(json)
@@ -57,8 +51,12 @@ class ByteJsonFormatSpec extends JsonFormatSpec {
 }
 
 private object ByteJsonFormatSpec {
-  private lazy val nextByteUpperBound: Int = Byte.MaxValue + Byte.MinValue.toInt.abs
+  private lazy val triesPerTest = 100
 
-  def nextByte: Byte =
-    (Random.nextInt(nextByteUpperBound) - Byte.MinValue.abs).toByte
+  lazy val Bytes: Seq[Byte] =
+    RandomDataProvider
+      .provideBytes
+      .distinct
+      .take(triesPerTest)
+      .toList
 }

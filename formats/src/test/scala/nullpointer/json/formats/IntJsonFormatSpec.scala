@@ -3,18 +3,17 @@ package nullpointer.json.formats
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
 import nullpointer.json.testing.JsonFormatSpec
+import nullpointer.json.testing.random.RandomDataProvider
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-import scala.util.Random
-
 class IntJsonFormatSpec extends JsonFormatSpec {
+  import IntJsonFormatSpec._
+
   describe("An IntJsonFormat") {
     it("must serialize to JsonNumber with correct value") {
       val serializeIntTestCases = Table(
         ("number", "expectedValue"),
-        (1 to 100)
-          .map(_ => Random.nextInt)
-          .map(n => n -> JsonNumber(n)):_*
+        Ints.map(n => n -> JsonNumber(n)):_*
       )
       forAll(serializeIntTestCases) { (number, expectedValue) =>
         val result = IntJsonFormat.serialize(number)
@@ -25,9 +24,7 @@ class IntJsonFormatSpec extends JsonFormatSpec {
     it("must deserialize JsonNumber to correct Int") {
       val deserializeJsonNumberTestCases = Table(
         ("json", "expectedNumber"),
-        (1 to 100)
-          .map(_ => Random.nextDouble)
-          .map(n => JsonNumber(n) -> n.toInt):_*
+        Ints.map(n => JsonNumber(n) -> n):_*
       )
       forAll(deserializeJsonNumberTestCases) { (json, expectedNumber) =>
         val result = IntJsonFormat.deserialize(json)
@@ -51,4 +48,15 @@ class IntJsonFormatSpec extends JsonFormatSpec {
       }
     }
   }
+}
+
+private object IntJsonFormatSpec {
+  private lazy val triesPerTest = 100
+
+  lazy val Ints: Seq[Int] =
+    RandomDataProvider
+      .provideInts
+      .distinct
+      .take(triesPerTest)
+      .toList
 }

@@ -3,18 +3,17 @@ package nullpointer.json.formats
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
 import nullpointer.json.testing.JsonFormatSpec
+import nullpointer.json.testing.random.RandomDataProvider
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-import scala.util.Random
-
 class DoubleJsonFormatSpec extends JsonFormatSpec {
+  import DoubleJsonFormatSpec._
+
   describe("A DoubleJsonFormat") {
     it("must serialize to JsonNumber with correct value") {
       val serializeDoubleTestCases = Table(
         ("number", "expectedValue"),
-        (1 to 100)
-          .map(_ => Random.nextDouble)
-          .map(n => n -> JsonNumber(n)):_*
+        Doubles.map(n => n -> JsonNumber(n)):_*
       )
       forAll(serializeDoubleTestCases) { (number, expectedValue) =>
         val result = DoubleJsonFormat.serialize(number)
@@ -25,9 +24,7 @@ class DoubleJsonFormatSpec extends JsonFormatSpec {
     it("must deserialize JsonNumber to correct Double") {
       val deserializeJsonNumberTestCases = Table(
         ("json", "expectedNumber"),
-        (1 to 100)
-          .map(_ => Random.nextDouble)
-          .map(n => JsonNumber(n) -> n):_*
+        Doubles.map(n => JsonNumber(n) -> n):_*
       )
       forAll(deserializeJsonNumberTestCases) { (json, expectedNumber) =>
         val result = DoubleJsonFormat.deserialize(json)
@@ -51,4 +48,15 @@ class DoubleJsonFormatSpec extends JsonFormatSpec {
       }
     }
   }
+}
+
+private object DoubleJsonFormatSpec {
+  private lazy val triesPerTest = 100
+
+  lazy val Doubles: Seq[Double] =
+    RandomDataProvider
+      .provideDoubles
+      .distinct
+      .take(triesPerTest)
+      .toList
 }

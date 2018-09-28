@@ -3,19 +3,17 @@ package nullpointer.json.formats
 import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
 import nullpointer.json.testing.JsonFormatSpec
+import nullpointer.json.testing.random.RandomDataProvider
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-import scala.util.Random
-
 class LongJsonFormatSpec extends JsonFormatSpec {
+  import LongJsonFormatSpec._
+
   describe("A LongJsonFormat") {
     it("must serialize to JsonNumber with correct value") {
-      // TODO: Check overflow issues during Long -> Double conversion
       val serializeLongTestCases = Table(
         ("number", "expectedValue"),
-        (1 to 100)
-          .map(_ => Random.nextLong)
-          .map(n => n -> JsonNumber(n)):_*
+        Longs.map(n => n -> JsonNumber(n)):_*
       )
       forAll(serializeLongTestCases) { (number, expectedValue) =>
         val result = LongJsonFormat.serialize(number)
@@ -26,9 +24,7 @@ class LongJsonFormatSpec extends JsonFormatSpec {
     it("must deserialize JsonNumber to correct Long") {
       val deserializeJsonNumberTestCases = Table(
         ("json", "expectedNumber"),
-        (1 to 100)
-          .map(_ => Random.nextDouble)
-          .map(n => JsonNumber(n) -> n.toLong):_*
+        Longs.map(n => JsonNumber(n) -> n):_*
       )
       forAll(deserializeJsonNumberTestCases) { (json, expectedNumber) =>
         val result = LongJsonFormat.deserialize(json)
@@ -52,4 +48,16 @@ class LongJsonFormatSpec extends JsonFormatSpec {
       }
     }
   }
+}
+
+private object LongJsonFormatSpec {
+  private lazy val triesPerTest = 100
+
+  lazy val Longs: Seq[Long] =
+    RandomDataProvider
+      .provideLongs
+      .map(_ % (1 << 63)) // Prevent overflow issues - don't care about numbers greater than 2^63
+      .distinct
+      .take(triesPerTest)
+      .toList
 }
