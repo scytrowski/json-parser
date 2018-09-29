@@ -2,7 +2,7 @@ package nullpointer.json.formats
 
 import nullpointer.json.JsonFormat
 import nullpointer.json.JsonValues.JsonValue
-import nullpointer.json.formats.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
+import nullpointer.json.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
 import nullpointer.json.testing.JsonFormatSpec
 import org.scalamock.scalatest.MixedMockFactory
 

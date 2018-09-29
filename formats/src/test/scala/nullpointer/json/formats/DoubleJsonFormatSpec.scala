@@ -1,7 +1,7 @@
 package nullpointer.json.formats
 
 import nullpointer.json.JsonValues._
-import nullpointer.json.formats.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
+import nullpointer.json.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
 import nullpointer.json.testing.JsonFormatSpec
 import nullpointer.json.testing.random.RandomDataProvider
 import nullpointer.json.testing.extensions.DoubleExtensions

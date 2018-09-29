@@ -2,7 +2,7 @@ package nullpointer.json.formats
 
 import nullpointer.json.JsonFormat
 import nullpointer.json.JsonValues.{JsonString, JsonValue}
-import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
+import nullpointer.json.JsonFormatExceptions.JsonDeserializationException
 
 import scala.util.{Failure, Success, Try}
 

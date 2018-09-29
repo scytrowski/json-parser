@@ -1,4 +1,4 @@
-package nullpointer.json.formats
+package nullpointer.json
 
 object JsonFormatExceptions {
   abstract class JsonFormatException(message: String = null, cause: Throwable = null) extends Exception
