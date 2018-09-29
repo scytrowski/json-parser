@@ -4,6 +4,7 @@ import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
 import nullpointer.json.testing.JsonFormatSpec
 import nullpointer.json.testing.random.RandomDataProvider
+import nullpointer.json.testing.extensions.FloatExtensions
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class FloatJsonFormatSpec extends JsonFormatSpec {
@@ -66,16 +67,15 @@ class FloatJsonFormatSpec extends JsonFormatSpec {
 }
 
 private object FloatJsonFormatSpec {
+  import FloatExtensions.FloatWithIsDefined
+
   private lazy val triesPerTest = 100
 
   lazy val Floats: Seq[Float] =
     RandomDataProvider
       .provideFloats
-      .filter(isDefinedFloat)
+      .filter(f => f.isDefined)
       .distinct
       .take(triesPerTest)
       .toList
-
-  private def isDefinedFloat(float: Float): Boolean =
-    !float.isNaN && !float.isInfinite
 }

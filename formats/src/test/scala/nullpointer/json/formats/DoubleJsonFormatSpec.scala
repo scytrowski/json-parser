@@ -4,6 +4,7 @@ import nullpointer.json.JsonValues._
 import nullpointer.json.formats.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
 import nullpointer.json.testing.JsonFormatSpec
 import nullpointer.json.testing.random.RandomDataProvider
+import nullpointer.json.testing.extensions.DoubleExtensions
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class DoubleJsonFormatSpec extends JsonFormatSpec {
@@ -66,16 +67,15 @@ class DoubleJsonFormatSpec extends JsonFormatSpec {
 }
 
 private object DoubleJsonFormatSpec {
+  import DoubleExtensions.DoubleWithIsDefined
+
   private lazy val triesPerTest = 100
 
   lazy val Doubles: Seq[Double] =
     RandomDataProvider
       .provideDoubles
-      .filter(isDefinedDouble)
+      .filter(d => d.isDefined)
       .distinct
       .take(triesPerTest)
       .toList
-
-  private def isDefinedDouble(double: Double): Boolean =
-    !double.isNaN && !double.isInfinity
 }
