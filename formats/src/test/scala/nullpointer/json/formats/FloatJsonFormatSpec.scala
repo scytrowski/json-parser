@@ -1,7 +1,7 @@
 package nullpointer.json.formats
 
 import nullpointer.json.JsonValues._
-import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
+import nullpointer.json.formats.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
 import nullpointer.json.testing.JsonFormatSpec
 import nullpointer.json.testing.random.RandomDataProvider
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -19,6 +19,21 @@ class FloatJsonFormatSpec extends JsonFormatSpec {
         val result = FloatJsonFormat.serialize(number)
         result must succeedWith[JsonValue](expectedValue)
       }
+    }
+
+    it("must fail with JsonSerializationException when try to serialize NaN") {
+      val result = FloatJsonFormat.serialize(Float.NaN)
+      result must failWith[JsonSerializationException]
+    }
+
+    it("must fail with JsonSerializationException when try to serialize +inf") {
+      val result = FloatJsonFormat.serialize(Float.PositiveInfinity)
+      result must failWith[JsonSerializationException]
+    }
+
+    it("must fail with JsonSerializationException when try to serialize -inf") {
+      val result = FloatJsonFormat.serialize(Float.NegativeInfinity)
+      result must failWith[JsonSerializationException]
     }
 
     it("must deserialize JsonNumber to correct Float") {
@@ -56,7 +71,11 @@ private object FloatJsonFormatSpec {
   lazy val Floats: Seq[Float] =
     RandomDataProvider
       .provideFloats
+      .filter(isDefinedFloat)
       .distinct
       .take(triesPerTest)
       .toList
+
+  private def isDefinedFloat(float: Float): Boolean =
+    !float.isNaN && !float.isInfinite
 }

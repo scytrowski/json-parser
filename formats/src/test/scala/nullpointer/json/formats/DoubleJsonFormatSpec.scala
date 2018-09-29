@@ -1,7 +1,7 @@
 package nullpointer.json.formats
 
 import nullpointer.json.JsonValues._
-import nullpointer.json.formats.JsonFormatExceptions.JsonDeserializationException
+import nullpointer.json.formats.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
 import nullpointer.json.testing.JsonFormatSpec
 import nullpointer.json.testing.random.RandomDataProvider
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -19,6 +19,21 @@ class DoubleJsonFormatSpec extends JsonFormatSpec {
         val result = DoubleJsonFormat.serialize(number)
         result must succeedWith[JsonValue](expectedValue)
       }
+    }
+
+    it("must fail with JsonSerializationException when try to serialize NaN") {
+      val result = DoubleJsonFormat.serialize(Double.NaN)
+      result must failWith[JsonSerializationException]
+    }
+
+    it("must fail with JsonSerializationException when try to serialize +inf") {
+      val result = DoubleJsonFormat.serialize(Double.PositiveInfinity)
+      result must failWith[JsonSerializationException]
+    }
+
+    it("must fail with JsonSerializationException when try to serialize -inf") {
+      val result = DoubleJsonFormat.serialize(Double.NegativeInfinity)
+      result must failWith[JsonSerializationException]
     }
 
     it("must deserialize JsonNumber to correct Double") {
@@ -56,7 +71,11 @@ private object DoubleJsonFormatSpec {
   lazy val Doubles: Seq[Double] =
     RandomDataProvider
       .provideDoubles
+      .filter(isDefinedDouble)
       .distinct
       .take(triesPerTest)
       .toList
+
+  private def isDefinedDouble(double: Double): Boolean =
+    !double.isNaN && !double.isInfinity
 }
