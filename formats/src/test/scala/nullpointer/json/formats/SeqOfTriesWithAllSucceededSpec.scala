@@ -24,8 +24,7 @@ class SeqOfTriesWithAllSucceededSpec extends CommonSpec with TryMatchers with Mo
       val seqOfTries = Seq(Success(succeededTryElement), Failure(failedTryException))
       val seqOfTriesWithAllSucceeded = new SeqOfTriesWithAllSucceeded(seqOfTries)
       val allSucceeded = seqOfTriesWithAllSucceeded.allSucceeded
-      allSucceeded.isFailure mustBe true
-      allSucceeded.asInstanceOf[Failure[Seq[TestClass]]].exception mustBe failedTryException
+      allSucceeded must failWith(failedTryException)
     }
   }
 }

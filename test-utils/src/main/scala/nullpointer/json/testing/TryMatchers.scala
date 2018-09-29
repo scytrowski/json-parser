@@ -11,7 +11,9 @@ trait TryMatchers {
 
   def succeedWith[T](expectedValue: T): TrySucceedWithMatcher[T] = new TrySucceedWithMatcher[T](expectedValue)
 
-  def failWith[E <: Throwable : ClassTag]: TryFailWithMatcher[E] = new TryFailWithMatcher[E]
+  def failWith(expectedThrowable: Throwable): TryFailWithMatcher = new TryFailWithMatcher(expectedThrowable)
+
+  def failWith[E <: Throwable : ClassTag]: TryFailWithTypeMatcher[E] = new TryFailWithTypeMatcher[E]
 }
 
 object TryMatchers extends MustMatchers {
@@ -24,7 +26,16 @@ object TryMatchers extends MustMatchers {
       )
   }
 
-  class TryFailWithMatcher[E <: Throwable](implicit tag: ClassTag[E]) extends Matcher[Try[_]] {
+  class TryFailWithMatcher(expectedThrowable: Throwable) extends Matcher[Try[_]] {
+    override def apply(left: Try[_]): MatchResult =
+      MatchResult(
+        left.isFailure && left.asInstanceOf[Failure[_]].exception === expectedThrowable,
+        s"""Try did not failed with "$expectedThrowable"""",
+        s"""Try failed with "$expectedThrowable""""
+      )
+  }
+
+  class TryFailWithTypeMatcher[E <: Throwable](implicit tag: ClassTag[E]) extends Matcher[Try[_]] {
     override def apply(left: Try[_]): MatchResult =
       MatchResult(
         left.isFailure && tag.runtimeClass.isAssignableFrom(left.asInstanceOf[Failure[_]].exception.getClass),
