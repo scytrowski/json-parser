@@ -4,7 +4,7 @@ import nullpointer.json.JsonFormat
 import nullpointer.json.JsonValues.{JsonNull, JsonValue}
 import nullpointer.json.formats.JsonFormatExceptions.{JsonDeserializationException, JsonSerializationException}
 import nullpointer.json.testing.JsonFormatSpec
-import org.scalamock.scalatest.{MixedMockFactory, MockFactory}
+import org.scalamock.scalatest.MixedMockFactory
 
 import scala.util.{Failure, Success}
 
