@@ -35,5 +35,5 @@ lazy val formats = (project in file("formats"))
   .settings(libraryDependencies ++= testDependenciesWithMocking)
 
 lazy val facade = (project in file("facade"))
-  .dependsOn(core, tokenizer, parser)
-  .settings(libraryDependencies ++= testDependencies)
+  .dependsOn(core, tokenizer, parser, formats)
+  .settings(libraryDependencies ++= testDependenciesWithMocking)

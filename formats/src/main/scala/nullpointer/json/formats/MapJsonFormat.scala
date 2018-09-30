@@ -59,14 +59,14 @@ class MapJsonFormat[K, V](implicit keyFormat: JsonFormat[K], valueFormat: JsonFo
 
   private def deserializeJsonObjectKey(key: String): Try[K] =
     keyFormat.deserialize(JsonString(key)) match {
-      case success: Success[JsonValue] => success
+      case success @ Success(_) => success
       case Failure(exception) =>
         Failure(JsonDeserializationException("Cannot deserialize map due to some entry key deserialization exception", exception))
     }
 
   private def deserializeJsonObjectValue(valueJson: JsonValue): Try[V] =
     valueFormat.deserialize(valueJson) match {
-      case success: Success[JsonValue] => success
+      case success @ Success(_) => success
       case Failure(exception) =>
         Failure(JsonDeserializationException("Cannot deserialize map due to some entry value deserialization exception", exception))
     }

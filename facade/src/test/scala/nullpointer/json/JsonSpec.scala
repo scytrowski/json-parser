@@ -2,8 +2,13 @@ package nullpointer.json
 
 import nullpointer.json.JsonValues._
 import nullpointer.json.testing.{CommonSpec, TryMatchers}
+import org.scalamock.scalatest.MixedMockFactory
 
-class JsonSpec extends CommonSpec with TryMatchers {
+import scala.util.Success
+
+class JsonSpec extends CommonSpec with TryMatchers with MixedMockFactory {
+  import JsonSpec._
+
   describe("Json") {
     it("must parse null") {
       val result = Json.parse("null")
@@ -137,5 +142,33 @@ class JsonSpec extends CommonSpec with TryMatchers {
         "d" -> JsonString("abc")
       )
     }
+
+    it("must forward format serialization result") {
+      val obj = mock[TestClass]
+      val serializedObj = Proxy.mock[JsonValue]
+      val format = mock[JsonFormat[TestClass]]
+      (format.serialize _)
+        .expects(obj)
+        .once()
+        .returns(Success(serializedObj))
+      val result = Json.toJson(obj)(format)
+      result mustBe Success(serializedObj)
+    }
+
+    it("must forward format deserialization result") {
+      val json = Proxy.mock[JsonValue]
+      val deserializedJson = mock[TestClass]
+      val format = mock[JsonFormat[TestClass]]
+      (format.deserialize _)
+        .expects(json)
+        .once()
+        .returns(Success(deserializedJson))
+      val result = Json.ofJson(json)(format)
+      result mustBe Success(deserializedJson)
+    }
   }
+}
+
+private object JsonSpec {
+  abstract class TestClass
 }
